@@ -1,0 +1,214 @@
+{
+  "nav": {
+    "home": "Home",
+    "artsCulture": "Arts & Culture",
+    "smes": "SMEs",
+    "youthCreativity": "Youth Creativity",
+    "services": "Services",
+    "insight": "Insight",
+    "gallery": "Gallery",
+    "contact": "Contact",
+    "collaborate": "Collaborate"
+  },
+  "hero": {
+    "imageAlt": "Traditional Nusantara dancer",
+    "eyebrow": "Nusantara Cultural Creativity Foundation",
+    "quote": "\"Dayatara is a growing space for Nusantara's creative energy — connecting ideas, people, and potential to create meaningful change.\"",
+    "ctaPrimary": "Grow With Dayatara →",
+    "ctaCatalog": "Download Catalog"
+  },
+  "beranda": {
+    "eyebrow": "About Us",
+    "headingLead": "A space for",
+    "headingEm": "collaboration",
+    "headingTail": "in Nusantara culture.",
+    "p1": "Driven by the spirit of keeping culture alive and beneficial for society, Yayasan Daya Cipta Nusantara (DAYATARA) exists as a collaboration space connecting culture, creativity, and community in one shared movement.",
+    "p2Lead": "Through the spirit of",
+    "p2Tail": ", DAYATARA drives the growth of Nusantara's arts & culture, strengthens local communities, opens creative space for the younger generation, and supports SMEs and the creative economy.",
+    "p3": "For DAYATARA, culture is not only a heritage to protect, but also a force that unites society and drives Nusantara's future.",
+    "focusEyebrow": "Our Focus",
+    "focusHeading": "Pillars at Dayatara.",
+    "pillars": [
+      { "title": "Nusantara Arts & Culture", "desc": "Development of traditional arts & culture — wayang, dance, music, and theatre." },
+      { "title": "SMEs & Creative Economy", "desc": "Empowering culture-based SMEs to grow and compete." },
+      { "title": "Youth Creativity", "desc": "Opening space for the younger generation to create, collaborate, and make an impact." }
+    ]
+  },
+  "pillarSection": {
+    "cta": "Collaborate on This Program →",
+    "whatsappMessage": "Hello Dayatara, I'm interested in collaborating on the {{title}} program."
+  },
+  "pillars": {
+    "seni": {
+      "eyebrow": "Pillar 01",
+      "title": "Nusantara Arts & Culture",
+      "body": [
+        "A development program for traditional arts and culture — from wayang, dance, and traditional music to theatre — with an approach that connects heritage with life today.",
+        "We facilitate performance curation, creative production, and creative space for artists across generations throughout Nusantara."
+      ]
+    },
+    "umkm": {
+      "eyebrow": "Pillar 02",
+      "title": "SMEs & Creative Economy",
+      "body": [
+        "Empowering culture-based SMEs through mentoring, training, product development, and market access.",
+        "Building a sustainable, fair creative economy ecosystem rooted in local wisdom."
+      ]
+    },
+    "muda": {
+      "eyebrow": "Pillar 03",
+      "title": "Youth Creativity",
+      "body": [
+        "Opening space for the younger generation to create, collaborate, and find their voice through the language of culture.",
+        "Workshops, residencies, and cross-disciplinary mentoring programs — from arts and media to creative entrepreneurship."
+      ]
+    }
+  },
+  "layanan": {
+    "eyebrow": "What We Do",
+    "heading": "Our Services",
+    "desc": "Seven core services connecting culture with our partners' needs.",
+    "services": [
+      { "title": "Strategic Consultant", "desc": "Culture-based strategic planning for institutions, corporations, and government." },
+      { "title": "Creative Development", "desc": "Developing creative concepts, ideas, and narratives rooted in local wisdom." },
+      { "title": "Community Engagement", "desc": "Building local community engagement through a participatory approach." },
+      { "title": "Sustainability Solutions", "desc": "Sustainable programs connecting culture with the environment & society." },
+      { "title": "Capacity Building & Training", "desc": "Training and capacity development for artists and SME actors." },
+      { "title": "Research & Development", "desc": "Cultural research, documentation, and development of Nusantara knowledge." },
+      { "title": "Art & Culture Performance", "desc": "High-quality arts & culture performance production." }
+    ],
+    "productsEyebrow": "Featured Programs",
+    "productsHeading": "Our four program pillars.",
+    "products": [
+      { "title": "Nusantara Arts & Culture Development" },
+      { "title": "SME & Creative Economy Empowerment" },
+      { "title": "Youth Creativity Development" },
+      { "title": "Media & Digital Promotion" }
+    ]
+  },
+  "values": {
+    "eyebrow": "Our Foundation",
+    "heading": "Foundation Values",
+    "items": [
+      { "title": "Integrity", "desc": "Upholding honesty and responsibility in every step." },
+      { "title": "Collaboration", "desc": "Collaboration across communities, generations, and institutions." },
+      { "title": "Innovation", "desc": "Bringing fresh ideas rooted in tradition." },
+      { "title": "Sustainability", "desc": "Programs with long-term impact." },
+      { "title": "Excellence", "desc": "The highest standard in every work and service." }
+    ]
+  },
+  "why": {
+    "eyebrow": "Your Trust",
+    "headingLead": "Why choose",
+    "desc": "More than two decades of experience working with communities, corporations, and government across Nusantara.",
+    "items": [
+      { "title": "Experienced Team", "desc": "More than two decades working in the culture and creative industry." },
+      { "title": "Needs-Based Solutions", "desc": "Every program is designed to fit our partners' context and goals." },
+      { "title": "Collaborative Approach", "desc": "Involving communities and cultural actors from start to finish." },
+      { "title": "Results-Oriented", "desc": "Focused on real impact, not just ceremony." },
+      { "title": "Extensive Network", "desc": "Connected with government, corporations, and communities across Nusantara." }
+    ]
+  },
+  "struktur": {
+    "eyebrow": "Organization",
+    "heading": "Organizational Structure",
+    "roles": {
+      "boardOfAdvisors": { "label": "Board of Advisors", "desc": "Provides strategic direction and safeguards the foundation's long-term vision and mission." },
+      "boardOfSupervisors": { "label": "Board of Supervisors", "desc": "Oversees program implementation and governance to keep the foundation accountable." },
+      "chairman": { "label": "Chairman", "desc": "Leads the foundation's strategic direction and coordinates all programs and partnerships." },
+      "secretary": { "label": "Secretary", "desc": "Manages the foundation's administration, documentation, and institutional communication." },
+      "treasurer": { "label": "Treasurer", "desc": "Responsible for the foundation's financial management and transparent budget reporting." }
+    }
+  },
+  "portfolio": {
+    "eyebrow": "Trusted By",
+    "heading": "Client Portfolio",
+    "categories": {
+      "government": {
+        "label": "Government",
+        "items": ["Ministry of Environment", "Ministry of Health", "Ministry of Agriculture", "Ministry of Tourism", "Ministry of SMEs & Cooperatives", "Ministry of Marine Affairs & Fisheries"]
+      },
+      "corporate": {
+        "label": "Corporate",
+        "items": ["Bank Mandiri", "Pertamina", "Jaya Ancol", "Pelindo"]
+      },
+      "community": {
+        "label": "Community",
+        "items": ["Kadin", "KNPI", "Pemuda Pancasila", "Pakutho", "Pakuwojo", "Komppi", "Persada BUMD"]
+      }
+    }
+  },
+  "insight": {
+    "eyebrow": "Latest Insight",
+    "heading": "Dayatara Insight",
+    "articles": [
+      {
+        "tag": "Performance",
+        "title": "Cross-Generation Collaborative Wayang Night in Yogyakarta",
+        "body": "This wayang kulit performance brought a senior dalang together with young artists on one stage, blending classic tales with contemporary interpretation. The event is part of Dayatara's Arts & Culture program aimed at nurturing the next generation of traditional artists.\n\nHeld in Yogyakarta, the evening drew local arts communities, academics, and members of the public eager to witness this cross-generational dialogue through the art of wayang."
+      },
+      {
+        "tag": "SMEs",
+        "title": "Nusantara Batik Exhibition Reaches Southeast Asian Markets",
+        "body": "The exhibition showcased dozens of batik works from artisans mentored by Dayatara, ranging from classic motifs to contemporary explorations. Through curation and hands-on support, these products successfully reached distribution networks in several Southeast Asian countries.\n\nThe program is part of Dayatara's SMEs & Creative Economy pillar, which focuses on strengthening production capacity and market access for culture-based businesses."
+      },
+      {
+        "tag": "Community",
+        "title": "Youth Creative Workshop: Weaving Nusantara's Stories",
+        "body": "The workshop invited young participants to reimagine Nusantara folk stories through creative approaches — from illustration and scriptwriting to digital content production. Participants were guided by mentors from the arts and media community.\n\nThe activity is a concrete expression of Dayatara's Youth Creativity pillar, opening space for young people to create while keeping Nusantara's storytelling heritage relevant for future generations."
+      }
+    ]
+  },
+  "gallery": {
+    "eyebrow": "Activity Documentation",
+    "heading": "Gallery",
+    "captions": ["Traditional Dance", "Wayang Golek", "Traditional Ceremony", "Gamelan", "Nusantara Batik", "Creative Youth"]
+  },
+  "testimonials": {
+    "eyebrow": "Testimonials",
+    "items": [
+      { "quote": "Dayatara helped us design a cultural program that truly comes alive within the community.", "author": "Corporate Partner", "role": "[Testimonial placeholder]" },
+      { "quote": "Dayatara's collaborative approach made our community feel involved from start to finish.", "author": "Community Leader", "role": "[Testimonial placeholder]" },
+      { "quote": "The quality of their performance curation and production is world-class. Highly recommended.", "author": "Government Institution", "role": "[Testimonial placeholder]" }
+    ]
+  },
+  "socialMedia": {
+    "eyebrow": "Stay Connected",
+    "heading": "Our Social Media.",
+    "labels": {
+      "whatsapp": "WhatsApp",
+      "email": "Email",
+      "website": "Website",
+      "instagram": "Instagram",
+      "facebook": "Facebook",
+      "tiktok": "TikTok",
+      "youtube": "YouTube",
+      "spotify": "Spotify"
+    }
+  },
+  "kontak": {
+    "eyebrow": "Contact",
+    "heading": "Let's Talk.",
+    "desc": "Consult your cultural collaboration needs. Our team is ready to respond quickly.",
+    "labels": {
+      "whatsapp": "WhatsApp",
+      "email": "Email",
+      "address": "Address"
+    },
+    "formHeading": "Send Message",
+    "formDesc": "Fill out the form below — we'll get in touch with you via WhatsApp.",
+    "nameLabel": "Name",
+    "namePlaceholder": "Your name",
+    "emailPlaceholder": "you@company.com",
+    "messageLabel": "Message",
+    "messagePlaceholder": "Tell us about your collaboration needs…",
+    "submit": "Send Message",
+    "whatsappDefaultMessage": "I'd like to collaborate with Dayatara.",
+    "whatsappTemplate": "Hello Dayatara, I'm {{name}} ({{email}}).\n{{message}}"
+  },
+  "footer": {
+    "desc": "Yayasan Daya Cipta Budaya Nusantara — a growing space for Nusantara's creative energy. Let's collaborate to bring culture to life together.",
+    "contactHeading": "Contact",
+    "officeHeading": "Office"
+  }
+}

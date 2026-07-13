@@ -1,0 +1,214 @@
+{
+  "nav": {
+    "home": "Beranda",
+    "artsCulture": "Seni Budaya",
+    "smes": "UMKM",
+    "youthCreativity": "Kreatifitas Muda",
+    "services": "Layanan",
+    "insight": "Insight",
+    "gallery": "Galeri",
+    "contact": "Kontak",
+    "collaborate": "Kolaborasi"
+  },
+  "hero": {
+    "imageAlt": "Penari tradisional Nusantara",
+    "eyebrow": "Yayasan Daya Cipta Budaya Nusantara",
+    "quote": "\"Dayatara adalah ruang tumbuh bagi daya cipta Nusantara — menghubungkan ide, manusia, dan potensi untuk menciptakan perubahan yang bermakna.\"",
+    "ctaPrimary": "Mari Bertumbuh Bersama Dayatara →",
+    "ctaCatalog": "Download Catalog"
+  },
+  "beranda": {
+    "eyebrow": "Tentang Kami",
+    "headingLead": "Wadah",
+    "headingEm": "kolaborasi",
+    "headingTail": "budaya Nusantara.",
+    "p1": "Atas dasar semangat menjaga budaya agar tetap hidup dan bermanfaat bagi masyarakat, Yayasan Daya Cipta Nusantara (DAYATARA) hadir sebagai wadah kolaborasi yang menghubungkan budaya, kreativitas, dan komunitas dalam satu gerakan bersama.",
+    "p2Lead": "Melalui semangat",
+    "p2Tail": ", DAYATARA mendorong tumbuhnya kegiatan seni & budaya Nusantara, memperkuat komunitas daerah, membuka ruang kreativitas generasi muda, serta mendukung UMKM dan ekonomi kreatif.",
+    "p3": "Bagi DAYATARA, budaya bukan hanya warisan yang perlu dijaga, tetapi juga kekuatan yang menyatukan masyarakat dan menggerakkan masa depan Nusantara.",
+    "focusEyebrow": "Fokus Kami",
+    "focusHeading": "Pilar di Dayatara.",
+    "pillars": [
+      { "title": "Seni Budaya Nusantara", "desc": "Pengembangan seni & budaya tradisi — wayang, tari, musik, dan teater." },
+      { "title": "UMKM & Ekonomi Kreatif", "desc": "Memberdayakan pelaku UMKM berbasis budaya untuk tumbuh dan berdaya saing." },
+      { "title": "Kreatifitas Muda", "desc": "Membuka ruang generasi muda untuk berkarya, berkolaborasi, dan berdampak." }
+    ]
+  },
+  "pillarSection": {
+    "cta": "Kolaborasi Program →",
+    "whatsappMessage": "Halo Dayatara, saya tertarik berkolaborasi di program {{title}}."
+  },
+  "pillars": {
+    "seni": {
+      "eyebrow": "Pilar 01",
+      "title": "Seni Budaya Nusantara",
+      "body": [
+        "Program pengembangan seni dan budaya tradisional — dari wayang, tari, musik tradisional, hingga teater — dengan pendekatan yang menghubungkan warisan dan kehidupan hari ini.",
+        "Kami memfasilitasi kurasi pertunjukan, produksi karya, serta ruang berkarya bagi seniman lintas generasi di seluruh Nusantara."
+      ]
+    },
+    "umkm": {
+      "eyebrow": "Pilar 02",
+      "title": "UMKM & Ekonomi Kreatif",
+      "body": [
+        "Memberdayakan pelaku UMKM berbasis budaya melalui pendampingan, pelatihan, pengembangan produk, hingga akses pasar.",
+        "Membangun ekosistem ekonomi kreatif yang berkelanjutan, adil, dan berakar pada kearifan lokal."
+      ]
+    },
+    "muda": {
+      "eyebrow": "Pilar 03",
+      "title": "Kreatifitas Muda",
+      "body": [
+        "Membuka ruang bagi generasi muda untuk berkarya, berkolaborasi, dan menemukan suara mereka melalui bahasa budaya.",
+        "Lokakarya, residensi, dan program mentoring lintas disiplin — dari seni, media, hingga wirausaha kreatif."
+      ]
+    }
+  },
+  "layanan": {
+    "eyebrow": "Apa Yang Kami Kerjakan",
+    "heading": "Layanan Unggulan",
+    "desc": "Tujuh layanan inti yang menghubungkan budaya dengan kebutuhan mitra kami.",
+    "services": [
+      { "title": "Strategic Consultant", "desc": "Perencanaan strategi berbasis budaya untuk institusi, korporasi, dan pemerintah." },
+      { "title": "Creative Development", "desc": "Pengembangan konsep kreatif, ide, dan narasi berakar pada kearifan lokal." },
+      { "title": "Community Engagement", "desc": "Membangun keterlibatan komunitas daerah lewat pendekatan partisipatif." },
+      { "title": "Sustainability Solutions", "desc": "Program berkelanjutan yang menghubungkan budaya dengan lingkungan & sosial." },
+      { "title": "Capacity Building & Training", "desc": "Pelatihan dan pengembangan kapasitas pelaku seni dan UMKM." },
+      { "title": "Research & Development", "desc": "Riset budaya, dokumentasi, dan pengembangan pengetahuan Nusantara." },
+      { "title": "Art & Culture Performance", "desc": "Produksi pertunjukan seni & budaya berkualitas tinggi." }
+    ],
+    "productsEyebrow": "Program Unggulan",
+    "productsHeading": "Empat pilar program kami.",
+    "products": [
+      { "title": "Pengembangan Seni & Budaya Nusantara" },
+      { "title": "Pemberdayaan UMKM & Ekonomi Kreatif" },
+      { "title": "Pengembangan Kreativitas Generasi Muda" },
+      { "title": "Media & Promosi Digital" }
+    ]
+  },
+  "values": {
+    "eyebrow": "Fondasi Kami",
+    "heading": "Nilai-Nilai Yayasan",
+    "items": [
+      { "title": "Integrity", "desc": "Menjunjung kejujuran dan tanggung jawab dalam setiap langkah." },
+      { "title": "Collaboration", "desc": "Kolaborasi lintas komunitas, generasi, dan institusi." },
+      { "title": "Innovation", "desc": "Menghadirkan gagasan segar berakar pada tradisi." },
+      { "title": "Sustainability", "desc": "Program yang berdampak jangka panjang." },
+      { "title": "Excellence", "desc": "Standar terbaik pada setiap karya dan layanan." }
+    ]
+  },
+  "why": {
+    "eyebrow": "Kepercayaan Anda",
+    "headingLead": "Mengapa memilih",
+    "desc": "Pengalaman lebih dari dua dekade bekerja bersama komunitas, korporasi, dan pemerintah di seluruh penjuru Nusantara.",
+    "items": [
+      { "title": "Tim Berpengalaman", "desc": "Lebih dari dua dekade berkarya di industri budaya dan kreatif." },
+      { "title": "Solusi Berbasis Kebutuhan", "desc": "Setiap program dirancang sesuai konteks dan tujuan mitra." },
+      { "title": "Pendekatan Kolaboratif", "desc": "Melibatkan komunitas dan pelaku budaya dari awal hingga akhir." },
+      { "title": "Berorientasi Hasil", "desc": "Fokus pada dampak nyata, bukan sekadar seremoni." },
+      { "title": "Jejaring yang Luas", "desc": "Terhubung dengan pemerintah, korporasi, dan komunitas di seluruh Nusantara." }
+    ]
+  },
+  "struktur": {
+    "eyebrow": "Organisasi",
+    "heading": "Struktur Organisasi",
+    "roles": {
+      "boardOfAdvisors": { "label": "Dewan Pembina", "desc": "Memberikan arahan strategis dan menjaga keberlanjutan visi serta misi yayasan dalam jangka panjang." },
+      "boardOfSupervisors": { "label": "Dewan Pengawas", "desc": "Mengawasi jalannya program dan tata kelola yayasan agar tetap sesuai dengan prinsip akuntabilitas." },
+      "chairman": { "label": "Ketua Umum", "desc": "Memimpin arah strategis yayasan serta mengoordinasikan seluruh program dan kemitraan." },
+      "secretary": { "label": "Sekretaris", "desc": "Mengelola administrasi, dokumentasi, dan komunikasi kelembagaan yayasan." },
+      "treasurer": { "label": "Bendahara", "desc": "Bertanggung jawab atas pengelolaan keuangan dan pelaporan anggaran yayasan secara transparan." }
+    }
+  },
+  "portfolio": {
+    "eyebrow": "Kepercayaan Mitra",
+    "heading": "Portofolio Klien",
+    "categories": {
+      "government": {
+        "label": "Government",
+        "items": ["Kementerian Lingkungan Hidup", "Kementerian Kesehatan", "Kementerian Pertanian", "Kementerian Pariwisata", "Kementerian KUKM", "Kementerian Kelautan & Perikanan"]
+      },
+      "corporate": {
+        "label": "Corporate",
+        "items": ["Bank Mandiri", "Pertamina", "Jaya Ancol", "Pelindo"]
+      },
+      "community": {
+        "label": "Community",
+        "items": ["Kadin", "KNPI", "Pemuda Pancasila", "Pakutho", "Pakuwojo", "Komppi", "Persada BUMD"]
+      }
+    }
+  },
+  "insight": {
+    "eyebrow": "Wawasan Terkini",
+    "heading": "Insight Dayatara",
+    "articles": [
+      {
+        "tag": "Pertunjukan",
+        "title": "Malam Wayang Kolaborasi Lintas Generasi di Yogyakarta",
+        "body": "Pertunjukan wayang kulit kali ini menghadirkan dalang senior berkolaborasi dengan seniman muda dalam satu panggung, memadukan lakon klasik dengan interpretasi kontemporer. Acara ini menjadi bagian dari rangkaian program Seni Budaya Nusantara yang digagas Dayatara untuk menjaga regenerasi seniman tradisional.\n\nDiselenggarakan di Yogyakarta, malam ini dihadiri oleh komunitas seni lokal, akademisi, dan masyarakat umum yang antusias menyaksikan dialog antar generasi lewat medium wayang."
+      },
+      {
+        "tag": "UMKM",
+        "title": "Pameran Batik Nusantara Menjangkau Pasar Asia Tenggara",
+        "body": "Pameran ini menampilkan puluhan karya batik dari para perajin binaan Dayatara, mulai dari motif klasik hingga eksplorasi kontemporer. Melalui kurasi dan pendampingan, produk-produk ini berhasil menembus jaringan distribusi di beberapa negara Asia Tenggara.\n\nProgram ini merupakan bagian dari pilar Pemberdayaan UMKM & Ekonomi Kreatif Dayatara, yang berfokus pada peningkatan kapasitas produksi sekaligus akses pasar bagi pelaku usaha berbasis budaya."
+      },
+      {
+        "tag": "Komunitas",
+        "title": "Lokakarya Kreatif Anak Muda: Menganyam Cerita Nusantara",
+        "body": "Lokakarya ini mengajak generasi muda untuk menuliskan ulang cerita rakyat Nusantara melalui pendekatan kreatif — mulai dari ilustrasi, penulisan naskah, hingga produksi konten digital. Peserta didampingi oleh mentor dari kalangan seniman dan praktisi media.\n\nKegiatan ini merupakan wujud nyata pilar Kreatifitas Muda Dayatara, membuka ruang bagi anak muda untuk berkarya sekaligus menjaga warisan cerita Nusantara agar tetap relevan bagi generasi mendatang."
+      }
+    ]
+  },
+  "gallery": {
+    "eyebrow": "Dokumentasi Kegiatan",
+    "heading": "Galeri",
+    "captions": ["Tari Tradisional", "Wayang Golek", "Upacara Adat", "Gamelan", "Batik Nusantara", "Anak Muda Kreatif"]
+  },
+  "testimonials": {
+    "eyebrow": "Testimoni",
+    "items": [
+      { "quote": "Dayatara membantu kami merancang program budaya yang benar-benar hidup di tengah masyarakat.", "author": "Mitra Korporasi", "role": "[Placeholder testimoni]" },
+      { "quote": "Pendekatan kolaboratif Dayatara membuat komunitas kami merasa dilibatkan dari awal hingga akhir.", "author": "Ketua Komunitas", "role": "[Placeholder testimoni]" },
+      { "quote": "Kualitas kurasi dan produksi pertunjukan mereka berkelas nasional. Sangat direkomendasikan.", "author": "Instansi Pemerintah", "role": "[Placeholder testimoni]" }
+    ]
+  },
+  "socialMedia": {
+    "eyebrow": "Terhubung Dengan Kami",
+    "heading": "Media Sosial Kami.",
+    "labels": {
+      "whatsapp": "WhatsApp",
+      "email": "Email",
+      "website": "Website",
+      "instagram": "Instagram",
+      "facebook": "Facebook",
+      "tiktok": "TikTok",
+      "youtube": "YouTube",
+      "spotify": "Spotify"
+    }
+  },
+  "kontak": {
+    "eyebrow": "Kontak",
+    "heading": "Mari Bicara.",
+    "desc": "Konsultasikan kebutuhan kolaborasi budaya Anda. Tim kami siap merespons dengan cepat.",
+    "labels": {
+      "whatsapp": "WhatsApp",
+      "email": "Email",
+      "address": "Alamat"
+    },
+    "formHeading": "Kirim Pesan",
+    "formDesc": "Isi form berikut — kami akan menghubungi Anda melalui WhatsApp.",
+    "nameLabel": "Nama",
+    "namePlaceholder": "Nama Anda",
+    "emailPlaceholder": "nama@perusahaan.com",
+    "messageLabel": "Pesan",
+    "messagePlaceholder": "Ceritakan kebutuhan kolaborasi Anda…",
+    "submit": "Kirim Pesan",
+    "whatsappDefaultMessage": "Saya ingin berkolaborasi dengan Dayatara.",
+    "whatsappTemplate": "Halo Dayatara, saya {{name}} ({{email}}).\n{{message}}"
+  },
+  "footer": {
+    "desc": "Yayasan Daya Cipta Budaya Nusantara — ruang tumbuh bagi daya cipta Nusantara. Mari berkolaborasi menghidupkan budaya bersama kami.",
+    "contactHeading": "Kontak",
+    "officeHeading": "Kantor"
+  }
+}

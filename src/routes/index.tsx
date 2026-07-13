@@ -1,5 +1,7 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { createContext, useContext, useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
+import { useTranslation } from "react-i18next";
+import i18n, { SUPPORTED_LANGUAGES, LANG_STORAGE_KEY } from "@/lib/i18n";
 import {
   Compass,
   Lightbulb,
@@ -31,6 +33,7 @@ import {
 import { DayataraLogo } from "@/components/DayataraLogo";
 import SplitText from "@/components/SplitText/SplitText";
 import { Carousel, CarouselContent, CarouselItem } from "@/components/ui/carousel";
+import { Dialog, DialogContent, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import Autoplay from "embla-carousel-autoplay";
 import heroImg from "@/assets/hero.jpg.asset.json";
 import seniImg from "@/assets/seni.jpg.asset.json";
@@ -76,14 +79,14 @@ function SpotifyIcon({ size = 20 }: { size?: number }) {
 }
 
 const NAV = [
-  { href: "#beranda", id: "Beranda", en: "Home", ar: "الرئيسية" },
-  { href: "#seni", id: "Seni Budaya", en: "Arts & Culture", ar: "الفنون والثقافة" },
-  { href: "#umkm", id: "UMKM", en: "SMEs", ar: "المشروعات الصغيرة" },
-  { href: "#muda", id: "Kreatifitas Muda", en: "Youth Creativity", ar: "إبداع الشباب" },
-  { href: "#layanan", id: "Layanan", en: "Services", ar: "الخدمات" },
-  { href: "#news", id: "News", en: "News", ar: "الأخبار" },
-  { href: "#galeri", id: "Galeri", en: "Gallery", ar: "المعرض" },
-  { href: "#kontak", id: "Kontak", en: "Contact", ar: "التواصل" },
+  { href: "#beranda", key: "home" },
+  { href: "#seni", key: "artsCulture" },
+  { href: "#umkm", key: "smes" },
+  { href: "#muda", key: "youthCreativity" },
+  { href: "#layanan", key: "services" },
+  { href: "#insight", key: "insight" },
+  { href: "#galeri", key: "gallery" },
+  { href: "#kontak", key: "contact" },
 ];
 
 /**
@@ -136,30 +139,6 @@ function Counter({ to, suffix = "+" }: { to: number; suffix?: string }) {
   );
 }
 
-const LANGUAGES = [
-  { code: "id", native: "Indonesia" },
-  { code: "en", native: "English" },
-  { code: "ar", native: "العربية" },
-];
-
-const LANG_STORAGE_KEY = "dayatara-lang";
-
-const LanguageContext = createContext<{ lang: string; setLang: (code: string) => void }>({
-  lang: "id",
-  setLang: () => {},
-});
-
-function useLang() {
-  return useContext(LanguageContext);
-}
-
-/** Returns the text for the active language (id/en/ar). Falls back to Indonesian if an Arabic variant hasn't been provided yet. */
-function tr(lang: string, id: string, en: string, ar?: string) {
-  if (lang === "en") return en;
-  if (lang === "ar") return ar ?? id;
-  return id;
-}
-
 /** Section heading with a staggered word-by-word entrance animation (React Bits' SplitText). */
 function SectionHeading({
   text,
@@ -191,32 +170,33 @@ function SectionHeading({
   );
 }
 
-function useLanguage() {
-  const [lang, setLangState] = useState<string | null>(null);
+/** Shows the language picker on first visit, then remembers the choice in localStorage and syncs <html dir/lang>. */
+function useLanguageGate() {
+  const { i18n } = useTranslation();
   const [showGate, setShowGate] = useState(false);
 
   useEffect(() => {
     const stored = window.localStorage.getItem(LANG_STORAGE_KEY);
     if (stored) {
-      setLangState(stored);
+      if (stored !== i18n.language) i18n.changeLanguage(stored);
     } else {
       setShowGate(true);
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  const setLang = (code: string) => {
+  useEffect(() => {
+    document.documentElement.dir = i18n.language === "ar" ? "rtl" : "ltr";
+    document.documentElement.lang = i18n.language;
+  }, [i18n.language]);
+
+  const selectLanguage = (code: string) => {
     window.localStorage.setItem(LANG_STORAGE_KEY, code);
-    setLangState(code);
+    i18n.changeLanguage(code);
     setShowGate(false);
   };
 
-  const activeLang = lang ?? "id";
-  useEffect(() => {
-    document.documentElement.dir = activeLang === "ar" ? "rtl" : "ltr";
-    document.documentElement.lang = activeLang;
-  }, [activeLang]);
-
-  return { lang: activeLang, setLang, showGate };
+  return { showGate, selectLanguage };
 }
 
 function LanguageGate({ onSelect }: { onSelect: (code: string) => void }) {
@@ -228,7 +208,7 @@ function LanguageGate({ onSelect }: { onSelect: (code: string) => void }) {
         <div className="mt-6 font-serif text-2xl tracking-widest text-[color:var(--cream)]">DAYATARA</div>
         <p className="eyebrow mt-4 !text-[color:var(--gold)]">Pilih Bahasa / Choose Language / اختر اللغة</p>
         <div className="mt-8 flex flex-col gap-3 sm:flex-row">
-          {LANGUAGES.map((l) => (
+          {SUPPORTED_LANGUAGES.map((l) => (
             <button
               key={l.code}
               onClick={() => onSelect(l.code)}
@@ -243,9 +223,14 @@ function LanguageGate({ onSelect }: { onSelect: (code: string) => void }) {
   );
 }
 
-function LangSwitcher({ lang, setLang }: { lang: string; setLang: (code: string) => void }) {
+function LangSwitcher() {
+  const { i18n } = useTranslation();
   const [open, setOpen] = useState(false);
-  const current = LANGUAGES.find((l) => l.code === lang) ?? LANGUAGES[0];
+  const current = SUPPORTED_LANGUAGES.find((l) => l.code === i18n.language) ?? SUPPORTED_LANGUAGES[0];
+  const selectLanguage = (code: string) => {
+    window.localStorage.setItem(LANG_STORAGE_KEY, code);
+    i18n.changeLanguage(code);
+  };
   return (
     <div className="relative">
       <button
@@ -260,15 +245,15 @@ function LangSwitcher({ lang, setLang }: { lang: string; setLang: (code: string)
         <>
           <div className="fixed inset-0 z-40" onClick={() => setOpen(false)} />
           <div className="absolute end-0 z-50 mt-2 w-40 overflow-hidden rounded-xl border border-[color:var(--gold)]/30 bg-[color:var(--navy)] shadow-xl">
-            {LANGUAGES.map((l) => (
+            {SUPPORTED_LANGUAGES.map((l) => (
               <button
                 key={l.code}
                 onClick={() => {
-                  setLang(l.code);
+                  selectLanguage(l.code);
                   setOpen(false);
                 }}
                 className={`block w-full px-4 py-2.5 text-left text-sm transition-colors hover:bg-[color:var(--gold)]/10 ${
-                  l.code === lang ? "text-[color:var(--gold)]" : "text-[color:var(--cream)]/85"
+                  l.code === current.code ? "text-[color:var(--gold)]" : "text-[color:var(--cream)]/85"
                 }`}
               >
                 {l.native}
@@ -282,7 +267,7 @@ function LangSwitcher({ lang, setLang }: { lang: string; setLang: (code: string)
 }
 
 function Nav() {
-  const { lang, setLang } = useLang();
+  const { t } = useTranslation();
   const [open, setOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
   useEffect(() => {
@@ -316,21 +301,21 @@ function Nav() {
               href={n.href}
               className="whitespace-nowrap text-xs font-semibold uppercase tracking-[0.15em] text-[color:var(--cream)]/85 hover:text-[color:var(--gold)] transition-colors xl:tracking-[0.2em]"
             >
-              {tr(lang, n.id, n.en, n.ar)}
+              {t(`nav.${n.key}`)}
             </a>
           ))}
         </nav>
         <div className="hidden items-center gap-4 lg:flex">
-          <LangSwitcher lang={lang} setLang={setLang} />
+          <LangSwitcher />
           <a
             href="#kontak"
             className="inline-flex items-center whitespace-nowrap rounded-full border border-[color:var(--gold)] px-5 py-2 text-xs font-semibold uppercase tracking-[0.15em] text-[color:var(--gold)] hover:bg-[color:var(--gold)] hover:text-[color:var(--navy)] transition-colors"
           >
-            {tr(lang, "Kolaborasi", "Collaborate", "تعاون")}
+            {t("nav.collaborate")}
           </a>
         </div>
         <div className="flex items-center gap-3 lg:hidden">
-          <LangSwitcher lang={lang} setLang={setLang} />
+          <LangSwitcher />
           <button
             className="text-[color:var(--cream)] p-2"
             onClick={() => setOpen((v) => !v)}
@@ -352,7 +337,7 @@ function Nav() {
                 onClick={() => setOpen(false)}
                 className="py-3 text-sm font-semibold uppercase tracking-[0.2em] text-[color:var(--cream)]/90 hover:text-[color:var(--gold)]"
               >
-                {tr(lang, n.id, n.en, n.ar)}
+                {t(`nav.${n.key}`)}
               </a>
             ))}
           </nav>
@@ -363,12 +348,12 @@ function Nav() {
 }
 
 function Hero() {
-  const { lang } = useLang();
+  const { t } = useTranslation();
   return (
     <section id="beranda" className="relative min-h-screen overflow-hidden bg-[color:var(--navy)] text-[color:var(--cream)]">
       <img
         src={heroImg.url}
-        alt={tr(lang, "Penari tradisional Nusantara", "Traditional Nusantara dancer", "راقصة تقليدية من نوسانتارا")}
+        alt={t("hero.imageAlt")}
         width={1600}
         height={1100}
         className="absolute inset-0 h-full w-full object-cover opacity-40"
@@ -380,7 +365,7 @@ function Hero() {
           <div className="mb-6 flex items-center gap-4">
             <span className="h-px w-12 bg-[color:var(--gold)]" />
             <span className="eyebrow !text-[color:var(--gold)]">
-              {tr(lang, "Yayasan Daya Cipta Budaya Nusantara", "Nusantara Cultural Creativity Foundation", "مؤسسة داياتارا للإبداع الثقافي في نوسانتارا")}
+              {t("hero.eyebrow")}
             </span>
           </div>
           <h1 className="display text-[clamp(2.4rem,6vw,5rem)] text-[color:var(--cream)]">
@@ -389,19 +374,14 @@ function Hero() {
             Creativity <span className="text-[color:var(--gold)]">&</span> Community
           </h1>
           <p className="mt-8 max-w-2xl text-lg leading-relaxed text-[color:var(--cream)]/85 md:text-xl">
-            {tr(
-              lang,
-              '"Dayatara adalah ruang tumbuh bagi daya cipta Nusantara — menghubungkan ide, manusia, dan potensi untuk menciptakan perubahan yang bermakna."',
-              '"Dayatara is a growing space for Nusantara\'s creative energy — connecting ideas, people, and potential to create meaningful change."',
-              '"داياتارا هي مساحة نمو للإبداع في نوسانتارا — تربط بين الأفكار والناس والإمكانات لصنع تغيير ذي معنى."'
-            )}
+            {t("hero.quote")}
           </p>
           <div className="mt-10 flex flex-wrap gap-4">
             <a
               href="#kontak"
               className="inline-flex items-center gap-2 rounded-full bg-[color:var(--gold)] px-8 py-4 text-sm font-semibold uppercase tracking-[0.2em] text-[color:var(--navy)] hover:bg-[color:var(--cream)] transition-colors"
             >
-              {tr(lang, "Mari Bertumbuh Bersama Dayatara →", "Grow With Dayatara →", "لننمُ معًا مع داياتارا ←")}
+              {t("hero.ctaPrimary")}
             </a>
             <a
               href="#kontak"
@@ -423,72 +403,41 @@ function Hero() {
 }
 
 function Beranda() {
-  const { lang } = useLang();
+  const { t } = useTranslation();
   const stats = [
     { n: 50, s: "+", label: "Project" },
     { n: 200, s: "+", label: "Partners" },
     { n: 50, s: "+", label: "Communities Empowered" },
     { n: 20, s: "+", label: "Years Experience" },
   ];
-  const pilar = [
-    {
-      id: { title: "Seni Budaya Nusantara", desc: "Pengembangan seni & budaya tradisi — wayang, tari, musik, dan teater." },
-      en: { title: "Nusantara Arts & Culture", desc: "Development of traditional arts & culture — wayang, dance, music, and theatre." },
-      ar: { title: "فنون وثقافة نوسانتارا", desc: "تطوير الفنون والثقافة التقليدية — الوايانج والرقص والموسيقى والمسرح." },
-    },
-    {
-      id: { title: "UMKM & Ekonomi Kreatif", desc: "Memberdayakan pelaku UMKM berbasis budaya untuk tumbuh dan berdaya saing." },
-      en: { title: "SMEs & Creative Economy", desc: "Empowering culture-based SMEs to grow and compete." },
-      ar: { title: "المشروعات الصغيرة والاقتصاد الإبداعي", desc: "تمكين المشروعات الصغيرة القائمة على الثقافة من النمو والمنافسة." },
-    },
-    {
-      id: { title: "Kreatifitas Muda", desc: "Membuka ruang generasi muda untuk berkarya, berkolaborasi, dan berdampak." },
-      en: { title: "Youth Creativity", desc: "Opening space for the younger generation to create, collaborate, and make an impact." },
-      ar: { title: "إبداع الشباب", desc: "فتح المجال أمام جيل الشباب للإبداع والتعاون وصنع الأثر." },
-    },
-  ];
+  const pillars = t("beranda.pillars", { returnObjects: true }) as { title: string; desc: string }[];
   return (
     <section className="relative py-24 md:py-32">
       <div className="mx-auto max-w-7xl px-6">
         <div className="grid gap-16 lg:grid-cols-12">
           <div className="lg:col-span-5 reveal">
-            <span className="eyebrow">{tr(lang, "Tentang Kami", "About Us", "من نحن")}</span>
+            <span className="eyebrow">{t("beranda.eyebrow")}</span>
             <h2 className="display mt-4 text-4xl md:text-5xl text-[color:var(--navy)]">
-              {tr(lang, "Wadah", "A space for", "مساحة")}{" "}
+              {t("beranda.headingLead")}{" "}
               <em className="text-[color:var(--gold)] not-italic normal-case font-serif italic">
-                {tr(lang, "kolaborasi", "collaboration", "للتعاون")}
+                {t("beranda.headingEm")}
               </em>
               <br />
-              {tr(lang, "budaya Nusantara.", "in Nusantara culture.", "الثقافي في نوسانتارا.")}
+              {t("beranda.headingTail")}
             </h2>
             <div className="batik-divider my-8 w-32" />
           </div>
           <div className="lg:col-span-7 reveal">
             <p className="text-lg leading-relaxed text-[color:var(--navy)]/80">
-              {tr(
-                lang,
-                "Atas dasar semangat menjaga budaya agar tetap hidup dan bermanfaat bagi masyarakat, Yayasan Daya Cipta Nusantara (DAYATARA) hadir sebagai wadah kolaborasi yang menghubungkan budaya, kreativitas, dan komunitas dalam satu gerakan bersama.",
-                "Driven by the spirit of keeping culture alive and beneficial for society, Yayasan Daya Cipta Nusantara (DAYATARA) exists as a collaboration space connecting culture, creativity, and community in one shared movement.",
-                "انطلاقًا من روح الحفاظ على الثقافة حية ونافعة للمجتمع، تأتي مؤسسة داياتارا (Yayasan Daya Cipta Nusantara) كمساحة تعاون تربط بين الثقافة والإبداع والمجتمع في حركة واحدة مشتركة."
-              )}
+              {t("beranda.p1")}
             </p>
             <p className="mt-4 text-lg leading-relaxed text-[color:var(--navy)]/80">
-              {tr(lang, "Melalui semangat", "Through the spirit of", "من خلال روح")}{" "}
+              {t("beranda.p2Lead")}{" "}
               <strong className="text-[color:var(--navy)]">Culture, Creativity, Community</strong>
-              {tr(
-                lang,
-                ", DAYATARA mendorong tumbuhnya kegiatan seni & budaya Nusantara, memperkuat komunitas daerah, membuka ruang kreativitas generasi muda, serta mendukung UMKM dan ekonomi kreatif.",
-                ", DAYATARA drives the growth of Nusantara's arts & culture, strengthens local communities, opens creative space for the younger generation, and supports SMEs and the creative economy.",
-                "، تدفع داياتارا نمو الفنون والثقافة في نوسانتارا، وتعزز المجتمعات المحلية، وتفتح مجال الإبداع أمام الشباب، وتدعم المشروعات الصغيرة والاقتصاد الإبداعي."
-              )}
+              {t("beranda.p2Tail")}
             </p>
             <p className="mt-4 text-lg leading-relaxed text-[color:var(--navy)]/80 italic">
-              {tr(
-                lang,
-                "Bagi DAYATARA, budaya bukan hanya warisan yang perlu dijaga, tetapi juga kekuatan yang menyatukan masyarakat dan menggerakkan masa depan Nusantara.",
-                "For DAYATARA, culture is not only a heritage to protect, but also a force that unites society and drives Nusantara's future.",
-                "بالنسبة لداياتارا، الثقافة ليست مجرد تراث يجب الحفاظ عليه، بل قوة توحّد المجتمع وتدفع مستقبل نوسانتارا إلى الأمام."
-              )}
+              {t("beranda.p3")}
             </p>
           </div>
         </div>
@@ -510,64 +459,52 @@ function Beranda() {
 
         {/* Pilar preview */}
         <div className="mt-24 text-center reveal">
-          <span className="eyebrow">{tr(lang, "Fokus Kami", "Our Focus", "تركيزنا")}</span>
+          <span className="eyebrow">{t("beranda.focusEyebrow")}</span>
           <SectionHeading
-            text={tr(lang, "Pilar di Dayatara.", "Pillars at Dayatara.", "ركائز داياتارا.")}
+            text={t("beranda.focusHeading")}
             className="display mt-4 text-4xl md:text-5xl text-[color:var(--navy)]"
           />
           <div className="batik-divider mx-auto my-6 w-40" />
         </div>
         <div className="mt-16 grid gap-8 md:grid-cols-3">
-          {pilar.map((p, i) => {
-            const c = lang === "en" ? p.en : lang === "ar" ? p.ar : p.id;
-            return (
+          {pillars.map((p, i) => (
             <div
-              key={p.id.title}
+              key={i}
               className="reveal group relative rounded-2xl border border-[color:var(--navy)]/10 bg-white/60 p-8 backdrop-blur transition-all hover:border-[color:var(--gold)] hover:-translate-y-1"
             >
               <div className="mb-6 font-serif text-4xl text-[color:var(--gold)]">
                 0{i + 1}
               </div>
-              <h3 className="font-serif text-2xl text-[color:var(--navy)]">{c.title}</h3>
-              <p className="mt-3 text-[color:var(--navy)]/70">{c.desc}</p>
+              <h3 className="font-serif text-2xl text-[color:var(--navy)]">{p.title}</h3>
+              <p className="mt-3 text-[color:var(--navy)]/70">{p.desc}</p>
             </div>
-            );
-          })}
+          ))}
         </div>
       </div>
     </section>
   );
 }
 
-type Bilingual = { id: string; en: string; ar?: string };
-
 function PillarSection({
   id,
-  eyebrow,
-  title,
-  body,
+  translationKey,
   image,
   reverse = false,
   tone = "cream",
 }: {
   id: string;
-  eyebrow: Bilingual;
-  title: Bilingual;
-  body: Bilingual[];
+  translationKey: "seni" | "umkm" | "muda";
   image: { url: string };
   reverse?: boolean;
   tone?: "cream" | "navy";
 }) {
-  const { lang } = useLang();
+  const { t } = useTranslation();
   const dark = tone === "navy";
-  const tTitle = tr(lang, title.id, title.en, title.ar);
+  const eyebrow = t(`pillars.${translationKey}.eyebrow`);
+  const title = t(`pillars.${translationKey}.title`);
+  const body = t(`pillars.${translationKey}.body`, { returnObjects: true }) as string[];
   const whatsappHref = `https://wa.me/6285817773695?text=${encodeURIComponent(
-    tr(
-      lang,
-      `Halo Dayatara, saya tertarik berkolaborasi di program ${tTitle}.`,
-      `Hello Dayatara, I'm interested in collaborating on the ${tTitle} program.`,
-      `مرحبًا داياتارا، أنا مهتم بالتعاون في برنامج ${tTitle}.`
-    )
+    t("pillarSection.whatsappMessage", { title })
   )}`;
   return (
     <section
@@ -580,23 +517,23 @@ function PillarSection({
             <div className="dot-grid absolute -left-4 -top-4 h-24 w-24 opacity-60" />
             <img
               src={image.url}
-              alt={tTitle}
+              alt={title}
               loading="lazy"
               className="relative aspect-[4/5] w-full rounded-3xl object-cover shadow-2xl"
             />
             <div className="dot-grid absolute -right-4 -bottom-4 h-24 w-24 opacity-60" />
           </div>
           <div className="reveal">
-            <span className="eyebrow">{tr(lang, eyebrow.id, eyebrow.en, eyebrow.ar)}</span>
+            <span className="eyebrow">{eyebrow}</span>
             <SectionHeading
-              text={tTitle}
+              text={title}
               className={`display mt-4 text-4xl md:text-5xl ${dark ? "text-[color:var(--cream)]" : "text-[color:var(--navy)]"}`}
               align="left"
             />
             <div className="batik-divider my-8 w-32" />
             {body.map((p, i) => (
               <p key={i} className={`mb-4 text-lg leading-relaxed ${dark ? "text-[color:var(--cream)]/80" : "text-[color:var(--navy)]/75"}`}>
-                {tr(lang, p.id, p.en, p.ar)}
+                {p}
               </p>
             ))}
             <a
@@ -609,7 +546,7 @@ function PillarSection({
                   : "bg-[color:var(--navy)] text-[color:var(--cream)] hover:bg-[color:var(--gold)] hover:text-[color:var(--navy)]"
               }`}
             >
-              {tr(lang, "Kolaborasi Program →", "Collaborate on This Program →", "تعاون في هذا البرنامج ←")}
+              {t("pillarSection.cta")}
             </a>
           </div>
         </div>
@@ -618,86 +555,82 @@ function PillarSection({
   );
 }
 
-const SERVICES = [
-  { t: "Strategic Consultant", tAr: "استشارات استراتيجية", d: "Perencanaan strategi berbasis budaya untuk institusi, korporasi, dan pemerintah.", dEn: "Culture-based strategic planning for institutions, corporations, and government.", dAr: "تخطيط استراتيجي قائم على الثقافة للمؤسسات والشركات والحكومة.", Icon: Compass },
-  { t: "Creative Development", tAr: "التطوير الإبداعي", d: "Pengembangan konsep kreatif, ide, dan narasi berakar pada kearifan lokal.", dEn: "Developing creative concepts, ideas, and narratives rooted in local wisdom.", dAr: "تطوير مفاهيم وأفكار وسرديات إبداعية متجذرة في الحكمة المحلية.", Icon: Lightbulb },
-  { t: "Community Engagement", tAr: "إشراك المجتمع", d: "Membangun keterlibatan komunitas daerah lewat pendekatan partisipatif.", dEn: "Building local community engagement through a participatory approach.", dAr: "بناء مشاركة المجتمعات المحلية من خلال نهج تشاركي.", Icon: Users },
-  { t: "Sustainability Solutions", tAr: "حلول الاستدامة", d: "Program berkelanjutan yang menghubungkan budaya dengan lingkungan & sosial.", dEn: "Sustainable programs connecting culture with the environment & society.", dAr: "برامج مستدامة تربط الثقافة بالبيئة والمجتمع.", Icon: Leaf },
-  { t: "Capacity Building & Training", tAr: "بناء القدرات والتدريب", d: "Pelatihan dan pengembangan kapasitas pelaku seni dan UMKM.", dEn: "Training and capacity development for artists and SME actors.", dAr: "تدريب وتطوير قدرات الفنانين وأصحاب المشروعات الصغيرة.", Icon: GraduationCap },
-  { t: "Research & Development", tAr: "البحث والتطوير", d: "Riset budaya, dokumentasi, dan pengembangan pengetahuan Nusantara.", dEn: "Cultural research, documentation, and development of Nusantara knowledge.", dAr: "بحث ثقافي وتوثيق وتطوير المعرفة الخاصة بنوسانتارا.", Icon: Microscope },
-  { t: "Art & Culture Performance", tAr: "العروض الفنية والثقافية", d: "Produksi pertunjukan seni & budaya berkualitas tinggi.", dEn: "High-quality arts & culture performance production.", dAr: "إنتاج عروض فنية وثقافية عالية الجودة.", Icon: Palette },
-];
-
-const PRODUCTS = [
-  { t: "Pengembangan Seni & Budaya Nusantara", tEn: "Nusantara Arts & Culture Development", tAr: "تطوير الفنون والثقافة في نوسانتارا", image: seniImg },
-  { t: "Pemberdayaan UMKM & Ekonomi Kreatif", tEn: "SME & Creative Economy Empowerment", tAr: "تمكين المشروعات الصغيرة والاقتصاد الإبداعي", image: umkmImg },
-  { t: "Pengembangan Kreativitas Generasi Muda", tEn: "Youth Creativity Development", tAr: "تطوير إبداع جيل الشباب", image: mudaImg },
-  { t: "Media & Promosi Digital", tEn: "Media & Digital Promotion", tAr: "الإعلام والترويج الرقمي", Icon: Megaphone },
+const SERVICE_ICONS = [Compass, Lightbulb, Users, Leaf, GraduationCap, Microscope, Palette];
+const PRODUCT_MEDIA: ({ image: { url: string } } | { Icon: typeof Megaphone })[] = [
+  { image: seniImg },
+  { image: umkmImg },
+  { image: mudaImg },
+  { Icon: Megaphone },
 ];
 
 function Layanan() {
-  const { lang } = useLang();
+  const { t } = useTranslation();
+  const services = t("layanan.services", { returnObjects: true }) as { title: string; desc: string }[];
+  const products = t("layanan.products", { returnObjects: true }) as { title: string }[];
   return (
     <section id="layanan" className="relative py-24 md:py-32 bg-[color:var(--cream)]">
       <div className="mx-auto max-w-7xl px-6">
         <div className="mb-16 text-center reveal">
-          <span className="eyebrow">{tr(lang, "Apa Yang Kami Kerjakan", "What We Do", "ماذا نقدم")}</span>
+          <span className="eyebrow">{t("layanan.eyebrow")}</span>
           <SectionHeading
-            text={tr(lang, "Layanan Unggulan", "Our Services", "خدماتنا المميزة")}
+            text={t("layanan.heading")}
             className="display mt-4 text-4xl md:text-5xl text-[color:var(--navy)]"
           />
           <div className="batik-divider mx-auto my-6 w-40" />
           <p className="mx-auto max-w-2xl text-[color:var(--navy)]/70">
-            {tr(lang, "Tujuh layanan inti yang menghubungkan budaya dengan kebutuhan mitra kami.", "Seven core services connecting culture with our partners' needs.", "سبع خدمات أساسية تربط الثقافة باحتياجات شركائنا.")}
+            {t("layanan.desc")}
           </p>
         </div>
 
         <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
-          {SERVICES.map((s, i) => (
-            <div
-              key={s.t}
-              className="reveal group relative flex flex-col rounded-2xl border border-[color:var(--navy)]/10 bg-white p-8 shadow-sm transition-all hover:-translate-y-1 hover:border-[color:var(--gold)] hover:shadow-xl"
-            >
-              <div className="mb-6 flex items-center justify-between">
-                <span className="grid h-14 w-14 place-items-center rounded-full bg-[color:var(--gold)]/10 text-[color:var(--gold)] transition-colors group-hover:bg-[color:var(--gold)] group-hover:text-white">
-                  <s.Icon size={26} strokeWidth={1.75} />
-                </span>
-                <span className="font-serif text-2xl italic text-[color:var(--navy)]/15 transition-colors group-hover:text-[color:var(--gold)]/50">
-                  0{i + 1}
-                </span>
+          {services.map((s, i) => {
+            const Icon = SERVICE_ICONS[i];
+            return (
+              <div
+                key={i}
+                className="reveal group relative flex flex-col rounded-2xl border border-[color:var(--navy)]/10 bg-white p-8 shadow-sm transition-all hover:-translate-y-1 hover:border-[color:var(--gold)] hover:shadow-xl"
+              >
+                <div className="mb-6 flex items-center justify-between">
+                  <span className="grid h-14 w-14 place-items-center rounded-full bg-[color:var(--gold)]/10 text-[color:var(--gold)] transition-colors group-hover:bg-[color:var(--gold)] group-hover:text-white">
+                    <Icon size={26} strokeWidth={1.75} />
+                  </span>
+                  <span className="font-serif text-2xl italic text-[color:var(--navy)]/15 transition-colors group-hover:text-[color:var(--gold)]/50">
+                    0{i + 1}
+                  </span>
+                </div>
+                <h3 className="font-serif text-xl text-[color:var(--navy)]">{s.title}</h3>
+                <p className="mt-3 text-sm leading-relaxed text-[color:var(--navy)]/70">{s.desc}</p>
               </div>
-              <h3 className="font-serif text-xl text-[color:var(--navy)]">{tr(lang, s.t, s.t, s.tAr)}</h3>
-              <p className="mt-3 text-sm leading-relaxed text-[color:var(--navy)]/70">{tr(lang, s.d, s.dEn, s.dAr)}</p>
-            </div>
-          ))}
+            );
+          })}
         </div>
 
         <div className="mt-20 rounded-3xl bg-[color:var(--navy)] p-10 md:p-14 text-[color:var(--cream)] reveal relative overflow-hidden">
           <div className="dot-grid absolute inset-0 opacity-10" />
           <div className="relative">
             <div className="max-w-xl">
-              <span className="eyebrow !text-[color:var(--gold)]">{tr(lang, "Program Unggulan", "Featured Programs", "برامجنا المميزة")}</span>
-              <h3 className="display mt-4 text-3xl md:text-4xl">{tr(lang, "Empat pilar program kami.", "Our four program pillars.", "ركائزنا الأربع للبرامج.")}</h3>
+              <span className="eyebrow !text-[color:var(--gold)]">{t("layanan.productsEyebrow")}</span>
+              <h3 className="display mt-4 text-3xl md:text-4xl">{t("layanan.productsHeading")}</h3>
             </div>
             <div className="mt-10 grid gap-5 sm:grid-cols-2 lg:grid-cols-4">
-              {PRODUCTS.map((p, i) => {
-                const label = tr(lang, p.t, p.tEn, p.tAr);
+              {products.map((p, i) => {
+                const media = PRODUCT_MEDIA[i];
                 return (
                 <div
-                  key={p.t}
+                  key={i}
                   className="group overflow-hidden rounded-2xl border border-[color:var(--cream)]/15 bg-[color:var(--cream)]/5 transition-all hover:-translate-y-1 hover:border-[color:var(--gold)] hover:bg-[color:var(--cream)]/10"
                 >
                   <div className="relative aspect-[4/3] w-full overflow-hidden">
-                    {p.image ? (
+                    {"image" in media ? (
                       <img
-                        src={p.image.url}
-                        alt={label}
+                        src={media.image.url}
+                        alt={p.title}
                         loading="lazy"
                         className="h-full w-full object-cover transition-transform duration-700 group-hover:scale-110"
                       />
                     ) : (
                       <div className="grid h-full w-full place-items-center bg-[color:var(--gold)]/10">
-                        {p.Icon && <p.Icon size={40} strokeWidth={1.5} className="text-[color:var(--gold)]" />}
+                        <media.Icon size={40} strokeWidth={1.5} className="text-[color:var(--gold)]" />
                       </div>
                     )}
                     <div className="absolute inset-0 bg-gradient-to-t from-[color:var(--navy)]/70 via-transparent to-transparent" />
@@ -705,7 +638,7 @@ function Layanan() {
                       {String(i + 1).padStart(2, "0")}
                     </span>
                   </div>
-                  <p className="p-6 text-lg leading-snug text-[color:var(--cream)]/90">{label}</p>
+                  <p className="p-6 text-lg leading-snug text-[color:var(--cream)]/90">{p.title}</p>
                 </div>
                 );
               })}
@@ -717,83 +650,69 @@ function Layanan() {
   );
 }
 
-const VALUES = [
-  { t: "Integrity", tAr: "النزاهة", d: "Menjunjung kejujuran dan tanggung jawab dalam setiap langkah.", dEn: "Upholding honesty and responsibility in every step.", dAr: "التمسك بالصدق والمسؤولية في كل خطوة.", Icon: ShieldCheck },
-  { t: "Collaboration", tAr: "التعاون", d: "Kolaborasi lintas komunitas, generasi, dan institusi.", dEn: "Collaboration across communities, generations, and institutions.", dAr: "تعاون بين المجتمعات والأجيال والمؤسسات.", Icon: Handshake },
-  { t: "Innovation", tAr: "الابتكار", d: "Menghadirkan gagasan segar berakar pada tradisi.", dEn: "Bringing fresh ideas rooted in tradition.", dAr: "تقديم أفكار جديدة متجذرة في التقاليد.", Icon: Sparkles },
-  { t: "Sustainability", tAr: "الاستدامة", d: "Program yang berdampak jangka panjang.", dEn: "Programs with long-term impact.", dAr: "برامج ذات أثر طويل الأمد.", Icon: Leaf },
-  { t: "Excellence", tAr: "التميز", d: "Standar terbaik pada setiap karya dan layanan.", dEn: "The highest standard in every work and service.", dAr: "أعلى المعايير في كل عمل وخدمة.", Icon: Award },
-];
-
-const WHY = [
-  { t: "Tim Berpengalaman", tEn: "Experienced Team", tAr: "فريق ذو خبرة", d: "Lebih dari dua dekade berkarya di industri budaya dan kreatif.", dEn: "More than two decades working in the culture and creative industry.", dAr: "أكثر من عقدين من العمل في صناعة الثقافة والإبداع." },
-  { t: "Solusi Berbasis Kebutuhan", tEn: "Needs-Based Solutions", tAr: "حلول قائمة على الاحتياجات", d: "Setiap program dirancang sesuai konteks dan tujuan mitra.", dEn: "Every program is designed to fit our partners' context and goals.", dAr: "كل برنامج مصمم بما يناسب سياق شركائنا وأهدافهم." },
-  { t: "Pendekatan Kolaboratif", tEn: "Collaborative Approach", tAr: "نهج تعاوني", d: "Melibatkan komunitas dan pelaku budaya dari awal hingga akhir.", dEn: "Involving communities and cultural actors from start to finish.", dAr: "إشراك المجتمعات والفاعلين الثقافيين من البداية إلى النهاية." },
-  { t: "Berorientasi Hasil", tEn: "Results-Oriented", tAr: "التركيز على النتائج", d: "Fokus pada dampak nyata, bukan sekadar seremoni.", dEn: "Focused on real impact, not just ceremony.", dAr: "التركيز على الأثر الحقيقي وليس مجرد الاحتفالية." },
-  { t: "Jejaring yang Luas", tEn: "Extensive Network", tAr: "شبكة علاقات واسعة", d: "Terhubung dengan pemerintah, korporasi, dan komunitas di seluruh Nusantara.", dEn: "Connected with government, corporations, and communities across Nusantara.", dAr: "على تواصل مع الحكومة والشركات والمجتمعات في جميع أنحاء نوسانتارا." },
-];
+const VALUE_ICONS = [ShieldCheck, Handshake, Sparkles, Leaf, Award];
 
 function ValuesWhy() {
-  const { lang } = useLang();
+  const { t } = useTranslation();
+  const values = t("values.items", { returnObjects: true }) as { title: string; desc: string }[];
+  const whyItems = t("why.items", { returnObjects: true }) as { title: string; desc: string }[];
   return (
     <section className="py-24 md:py-32">
       <div className="mx-auto max-w-7xl px-6">
         <div className="text-center reveal">
-          <span className="eyebrow">{tr(lang, "Fondasi Kami", "Our Foundation", "أسسنا")}</span>
+          <span className="eyebrow">{t("values.eyebrow")}</span>
           <SectionHeading
-            text={tr(lang, "Nilai-Nilai Yayasan", "Foundation Values", "قيم المؤسسة")}
+            text={t("values.heading")}
             className="display mt-4 text-4xl md:text-5xl text-[color:var(--navy)]"
           />
           <div className="batik-divider mx-auto my-6 w-40" />
         </div>
         <div className="mt-16 grid gap-6 sm:grid-cols-2 lg:grid-cols-5">
-          {VALUES.map((v, i) => (
-            <div
-              key={v.t}
-              className="reveal group relative rounded-2xl border border-[color:var(--navy)]/10 bg-white p-7 shadow-sm transition-all hover:-translate-y-1 hover:border-[color:var(--gold)] hover:shadow-xl"
-            >
-              <div className="flex items-center justify-between">
-                <span className="grid h-12 w-12 place-items-center rounded-full bg-[color:var(--navy)] text-[color:var(--gold)] transition-colors group-hover:bg-[color:var(--gold)] group-hover:text-[color:var(--navy)]">
-                  <v.Icon size={22} strokeWidth={1.75} />
-                </span>
-                <span className="font-serif text-xs uppercase tracking-[0.3em] text-[color:var(--navy)]/30">
-                  {String(i + 1).padStart(2, "0")}
-                </span>
+          {values.map((v, i) => {
+            const Icon = VALUE_ICONS[i];
+            return (
+              <div
+                key={i}
+                className="reveal group relative rounded-2xl border border-[color:var(--navy)]/10 bg-white p-7 shadow-sm transition-all hover:-translate-y-1 hover:border-[color:var(--gold)] hover:shadow-xl"
+              >
+                <div className="flex items-center justify-between">
+                  <span className="grid h-12 w-12 place-items-center rounded-full bg-[color:var(--navy)] text-[color:var(--gold)] transition-colors group-hover:bg-[color:var(--gold)] group-hover:text-[color:var(--navy)]">
+                    <Icon size={22} strokeWidth={1.75} />
+                  </span>
+                  <span className="font-serif text-xs uppercase tracking-[0.3em] text-[color:var(--navy)]/30">
+                    {String(i + 1).padStart(2, "0")}
+                  </span>
+                </div>
+                <h3 className="mt-5 font-serif text-2xl text-[color:var(--navy)]">{v.title}</h3>
+                <p className="mt-2 text-sm leading-relaxed text-[color:var(--navy)]/70">{v.desc}</p>
               </div>
-              <h3 className="mt-5 font-serif text-2xl text-[color:var(--navy)]">{tr(lang, v.t, v.t, v.tAr)}</h3>
-              <p className="mt-2 text-sm leading-relaxed text-[color:var(--navy)]/70">{tr(lang, v.d, v.dEn, v.dAr)}</p>
-            </div>
-          ))}
+            );
+          })}
         </div>
 
         <div className="mt-24 grid gap-12 lg:grid-cols-2 items-center">
           <div className="reveal">
-            <span className="eyebrow">{tr(lang, "Kepercayaan Anda", "Your Trust", "ثقتكم")}</span>
+            <span className="eyebrow">{t("why.eyebrow")}</span>
             <h2 className="display mt-4 text-4xl md:text-5xl text-[color:var(--navy)]">
-              {tr(lang, "Mengapa memilih", "Why choose", "لماذا تختار")}<br />Dayatara.
+              {t("why.headingLead")}<br />Dayatara.
             </h2>
             <div className="batik-divider my-6 w-32" />
             <p className="text-[color:var(--navy)]/70 text-lg">
-              {tr(
-                lang,
-                "Pengalaman lebih dari dua dekade bekerja bersama komunitas, korporasi, dan pemerintah di seluruh penjuru Nusantara.",
-                "More than two decades of experience working with communities, corporations, and government across Nusantara.",
-                "أكثر من عقدين من الخبرة في العمل مع المجتمعات والشركات والحكومة في جميع أنحاء نوسانتارا."
-              )}
+              {t("why.desc")}
             </p>
           </div>
           <div className="reveal grid gap-4 sm:grid-cols-2">
-            {WHY.map((w) => (
+            {whyItems.map((w, i) => (
               <div
-                key={w.t}
+                key={i}
                 className="group flex items-start gap-4 rounded-2xl border border-[color:var(--navy)]/10 bg-white p-6 shadow-sm transition-all hover:-translate-y-1 hover:border-[color:var(--gold)] hover:shadow-xl"
               >
                 <span className="mt-0.5 grid h-9 w-9 shrink-0 place-items-center rounded-full bg-[color:var(--gold)]/10 text-[color:var(--gold)] transition-colors group-hover:bg-[color:var(--gold)] group-hover:text-white">
                   <CheckCircle2 size={18} strokeWidth={2} />
                 </span>
                 <div>
-                  <div className="font-serif text-lg text-[color:var(--navy)]">{tr(lang, w.t, w.tEn, w.tAr)}</div>
-                  <p className="mt-1 text-sm leading-relaxed text-[color:var(--navy)]/65">{tr(lang, w.d, w.dEn, w.dAr)}</p>
+                  <div className="font-serif text-lg text-[color:var(--navy)]">{w.title}</div>
+                  <p className="mt-1 text-sm leading-relaxed text-[color:var(--navy)]/65">{w.desc}</p>
                 </div>
               </div>
             ))}
@@ -805,14 +724,14 @@ function ValuesWhy() {
 }
 
 const ORG_MEMBERS = [
-  { name: "Pratomo Setyohadi", role: "Dewan Pembina", roleEn: "Board of Advisors", roleAr: "مجلس الأمناء" },
-  { name: "Bambang Sugiantoro", role: "Dewan Pembina", roleEn: "Board of Advisors", roleAr: "مجلس الأمناء" },
-  { name: "Untung Raharjo", role: "Dewan Pengawas", roleEn: "Board of Supervisors", roleAr: "مجلس المراقبين" },
-  { name: "Nanang Junaedi", role: "Dewan Pengawas", roleEn: "Board of Supervisors", roleAr: "مجلس المراقبين" },
-  { name: "Ginanjar Duta", role: "Dewan Pengawas", roleEn: "Board of Supervisors", roleAr: "مجلس المراقبين" },
-  { name: "Teguh Suharmaji", role: "Ketua Umum", roleEn: "Chairman", roleAr: "الرئيس العام" },
-  { name: "Sari Wardi Astuti", role: "Sekretaris", roleEn: "Secretary", roleAr: "الأمين العام" },
-  { name: "Dedi Abdul Rahmat Saleh", role: "Bendahara", roleEn: "Treasurer", roleAr: "أمين الصندوق" },
+  { name: "Pratomo Setyohadi", roleKey: "boardOfAdvisors" },
+  { name: "Bambang Sugiantoro", roleKey: "boardOfAdvisors" },
+  { name: "Untung Raharjo", roleKey: "boardOfSupervisors" },
+  { name: "Nanang Junaedi", roleKey: "boardOfSupervisors" },
+  { name: "Ginanjar Duta", roleKey: "boardOfSupervisors" },
+  { name: "Teguh Suharmaji", roleKey: "chairman" },
+  { name: "Sari Wardi Astuti", roleKey: "secretary" },
+  { name: "Dedi Abdul Rahmat Saleh", roleKey: "treasurer" },
 ];
 
 function initials(name: string) {
@@ -820,15 +739,15 @@ function initials(name: string) {
 }
 
 function Struktur() {
-  const { lang } = useLang();
+  const { t } = useTranslation();
   const autoplay = useRef(Autoplay({ delay: 2800, stopOnInteraction: false }));
   return (
     <section className="py-24 md:py-32 bg-[color:var(--navy)] text-[color:var(--cream)]">
       <div className="mx-auto max-w-7xl px-6">
         <div className="text-center reveal">
-          <span className="eyebrow">{tr(lang, "Organisasi", "Organization", "المنظمة")}</span>
+          <span className="eyebrow">{t("struktur.eyebrow")}</span>
           <SectionHeading
-            text={tr(lang, "Struktur Organisasi", "Organizational Structure", "الهيكل التنظيمي")}
+            text={t("struktur.heading")}
             className="display mt-4 text-4xl md:text-5xl"
           />
           <div className="batik-divider mx-auto my-6 w-40" />
@@ -840,22 +759,48 @@ function Struktur() {
           className="mt-16 reveal"
         >
           <CarouselContent className="py-3">
-            {ORG_MEMBERS.map((p) => (
-              <CarouselItem key={p.name} className="basis-4/5 sm:basis-1/2 lg:basis-1/4">
-                <div className="group h-full rounded-2xl border border-[color:var(--cream)]/15 bg-[color:var(--cream)]/5 p-8 text-center transition-all hover:-translate-y-1 hover:border-[color:var(--gold)] hover:bg-[color:var(--cream)]/10">
-                  <div className="relative mx-auto h-24 w-24">
-                    <div className="grid h-24 w-24 place-items-center rounded-full border-2 border-[color:var(--gold)] bg-[color:var(--gold)]/10 font-serif text-2xl text-[color:var(--gold)]">
-                      {initials(p.name)}
-                    </div>
-                    <span className="absolute -bottom-1 -right-1 grid h-8 w-8 place-items-center rounded-full bg-[color:var(--gold)] text-[color:var(--navy)] ring-4 ring-[color:var(--navy)]">
-                      <Users size={14} strokeWidth={2.5} />
-                    </span>
-                  </div>
-                  <div className="mt-5 font-serif text-lg text-[color:var(--cream)]">{p.name}</div>
-                  <div className="mt-1 text-xs uppercase tracking-[0.25em] text-[color:var(--gold)]">{tr(lang, p.role, p.roleEn, p.roleAr)}</div>
-                </div>
-              </CarouselItem>
-            ))}
+            {ORG_MEMBERS.map((p) => {
+              const role = t(`struktur.roles.${p.roleKey}.label`);
+              const desc = t(`struktur.roles.${p.roleKey}.desc`);
+              return (
+                <CarouselItem key={p.name} className="basis-4/5 sm:basis-1/2 lg:basis-1/4">
+                  <Dialog>
+                    <DialogTrigger asChild>
+                      <button
+                        type="button"
+                        className="group h-full w-full cursor-pointer rounded-2xl border border-[color:var(--cream)]/15 bg-[color:var(--cream)]/5 p-8 text-center transition-all hover:-translate-y-1 hover:border-[color:var(--gold)] hover:bg-[color:var(--cream)]/10"
+                      >
+                        <div className="relative mx-auto h-24 w-24">
+                          <div className="grid h-24 w-24 place-items-center rounded-full border-2 border-[color:var(--gold)] bg-[color:var(--gold)]/10 font-serif text-2xl text-[color:var(--gold)]">
+                            {initials(p.name)}
+                          </div>
+                          <span className="absolute -bottom-1 -right-1 grid h-8 w-8 place-items-center rounded-full bg-[color:var(--gold)] text-[color:var(--navy)] ring-4 ring-[color:var(--navy)]">
+                            <Users size={14} strokeWidth={2.5} />
+                          </span>
+                        </div>
+                        <div className="mt-5 font-serif text-lg text-[color:var(--cream)]">{p.name}</div>
+                        <div className="mt-1 text-xs uppercase tracking-[0.25em] text-[color:var(--gold)]">{role}</div>
+                      </button>
+                    </DialogTrigger>
+                    <DialogContent className="border-[color:var(--gold)]/30 bg-[color:var(--navy)] text-[color:var(--cream)] sm:max-w-md">
+                      <DialogTitle className="sr-only">{p.name}</DialogTitle>
+                      <div className="flex flex-col items-center pt-4 text-center">
+                        <div className="grid h-28 w-28 place-items-center rounded-full border-2 border-[color:var(--gold)] bg-[color:var(--gold)]/10 font-serif text-3xl text-[color:var(--gold)]">
+                          {initials(p.name)}
+                        </div>
+                        <div className="mt-5 font-serif text-2xl text-[color:var(--cream)]">{p.name}</div>
+                        <div className="mt-1 text-xs uppercase tracking-[0.25em] text-[color:var(--gold)]">
+                          {role}
+                        </div>
+                        <p className="mt-5 text-sm leading-relaxed text-[color:var(--cream)]/75">
+                          {desc}
+                        </p>
+                      </div>
+                    </DialogContent>
+                  </Dialog>
+                </CarouselItem>
+              );
+            })}
           </CarouselContent>
         </Carousel>
       </div>
@@ -863,64 +808,46 @@ function Struktur() {
   );
 }
 
-const CLIENTS = [
-  {
-    cat: "Government",
-    catAr: "الحكومة",
-    Icon: Landmark,
-    list: ["Kementerian Lingkungan Hidup", "Kementerian Kesehatan", "Kementerian Pertanian", "Kementerian Pariwisata", "Kementerian KUKM", "Kementerian Kelautan & Perikanan"],
-    listEn: ["Ministry of Environment", "Ministry of Health", "Ministry of Agriculture", "Ministry of Tourism", "Ministry of SMEs & Cooperatives", "Ministry of Marine Affairs & Fisheries"],
-    listAr: ["وزارة البيئة", "وزارة الصحة", "وزارة الزراعة", "وزارة السياحة", "وزارة المشروعات الصغيرة والتعاونيات", "وزارة الشؤون البحرية ومصائد الأسماك"],
-  },
-  {
-    cat: "Corporate",
-    catAr: "الشركات",
-    Icon: Building2,
-    list: ["Bank Mandiri", "Pertamina", "Jaya Ancol", "Pelindo"],
-    listEn: ["Bank Mandiri", "Pertamina", "Jaya Ancol", "Pelindo"],
-    listAr: ["Bank Mandiri", "Pertamina", "Jaya Ancol", "Pelindo"],
-  },
-  {
-    cat: "Community",
-    catAr: "المجتمع",
-    Icon: HeartHandshake,
-    list: ["Kadin", "KNPI", "Pemuda Pancasila", "Pakutho", "Pakuwojo", "Komppi", "Persada BUMD"],
-    listEn: ["Kadin", "KNPI", "Pemuda Pancasila", "Pakutho", "Pakuwojo", "Komppi", "Persada BUMD"],
-    listAr: ["Kadin", "KNPI", "Pemuda Pancasila", "Pakutho", "Pakuwojo", "Komppi", "Persada BUMD"],
-  },
+const CLIENT_CATEGORIES = [
+  { key: "government", Icon: Landmark },
+  { key: "corporate", Icon: Building2 },
+  { key: "community", Icon: HeartHandshake },
 ];
 
 function Portofolio() {
-  const { lang } = useLang();
+  const { t } = useTranslation();
   return (
     <section className="py-24 md:py-32">
       <div className="mx-auto max-w-7xl px-6">
         <div className="text-center reveal">
-          <span className="eyebrow">{tr(lang, "Kepercayaan Mitra", "Trusted By", "ثقة شركائنا")}</span>
+          <span className="eyebrow">{t("portfolio.eyebrow")}</span>
           <SectionHeading
-            text={tr(lang, "Portofolio Klien", "Client Portfolio", "محفظة العملاء")}
+            text={t("portfolio.heading")}
             className="display mt-4 text-4xl md:text-5xl text-[color:var(--navy)]"
           />
           <div className="batik-divider mx-auto my-6 w-40" />
         </div>
         <div className="mt-16 grid gap-6 md:grid-cols-3">
-          {CLIENTS.map((group) => {
-            const list = lang === "en" ? group.listEn : lang === "ar" ? group.listAr : group.list;
+          {CLIENT_CATEGORIES.map((cat) => {
+            const category = t(`portfolio.categories.${cat.key}`, { returnObjects: true }) as {
+              label: string;
+              items: string[];
+            };
             return (
             <div
-              key={group.cat}
+              key={cat.key}
               className="reveal rounded-2xl border border-[color:var(--navy)]/10 bg-white p-8 shadow-sm transition-all hover:-translate-y-1 hover:border-[color:var(--gold)] hover:shadow-xl"
             >
               <div className="flex items-center gap-3">
                 <span className="grid h-12 w-12 place-items-center rounded-full bg-[color:var(--navy)] text-[color:var(--gold)]">
-                  <group.Icon size={20} strokeWidth={1.75} />
+                  <cat.Icon size={20} strokeWidth={1.75} />
                 </span>
-                <h3 className="font-serif text-lg text-[color:var(--navy)]">{tr(lang, group.cat, group.cat, group.catAr)}</h3>
+                <h3 className="font-serif text-lg text-[color:var(--navy)]">{category.label}</h3>
               </div>
               <div className="mt-6 flex flex-wrap gap-2">
-                {list.map((c, idx) => (
+                {category.items.map((c, idx) => (
                   <span
-                    key={group.list[idx]}
+                    key={idx}
                     className="rounded-full border border-[color:var(--navy)]/10 bg-[color:var(--cream)]/60 px-4 py-2 text-sm text-[color:var(--navy)]/85 transition-colors hover:border-[color:var(--gold)] hover:bg-[color:var(--gold)]/10"
                   >
                     {c}
@@ -936,108 +863,109 @@ function Portofolio() {
   );
 }
 
-const NEWS = [
-  {
-    tag: "Pertunjukan", tagEn: "Performance", tagAr: "عرض",
-    title: "Malam Wayang Kolaborasi Lintas Generasi di Yogyakarta",
-    titleEn: "Cross-Generation Collaborative Wayang Night in Yogyakarta",
-    titleAr: "أمسية وايانج تعاونية بين الأجيال في يوجياكارتا",
-    date: "12 Nov 2025", img: gal4,
-  },
-  {
-    tag: "UMKM", tagEn: "SMEs", tagAr: "المشروعات الصغيرة",
-    title: "Pameran Batik Nusantara Menjangkau Pasar Asia Tenggara",
-    titleEn: "Nusantara Batik Exhibition Reaches Southeast Asian Markets",
-    titleAr: "معرض باتيك نوسانتارا يصل إلى أسواق جنوب شرق آسيا",
-    date: "28 Okt 2025", img: gal2,
-  },
-  {
-    tag: "Komunitas", tagEn: "Community", tagAr: "المجتمع",
-    title: "Lokakarya Kreatif Anak Muda: Menganyam Cerita Nusantara",
-    titleEn: "Youth Creative Workshop: Weaving Nusantara's Stories",
-    titleAr: "ورشة إبداعية للشباب: نسج حكايات نوسانتارا",
-    date: "05 Okt 2025", img: mudaImg,
-  },
+const INSIGHT_MEDIA = [
+  { img: gal4, date: "12 Nov 2025" },
+  { img: gal2, date: "28 Okt 2025" },
+  { img: mudaImg, date: "05 Okt 2025" },
 ];
 
-function News() {
-  const { lang } = useLang();
+function Insight() {
+  const { t } = useTranslation();
+  const articles = t("insight.articles", { returnObjects: true }) as { tag: string; title: string; body: string }[];
   return (
-    <section id="news" className="py-24 md:py-32 bg-[color:var(--cream)]">
+    <section id="insight" className="py-24 md:py-32 bg-[color:var(--cream)]">
       <div className="mx-auto max-w-7xl px-6">
         <div className="mb-14 flex flex-wrap items-end justify-between gap-6 reveal">
           <div>
-            <span className="eyebrow">{tr(lang, "Kabar Terkini", "Latest News", "آخر الأخبار")}</span>
+            <span className="eyebrow">{t("insight.eyebrow")}</span>
             <SectionHeading
-              text={tr(lang, "Jurnal Dayatara", "Dayatara Journal", "مجلة داياتارا")}
+              text={t("insight.heading")}
               className="display mt-4 text-4xl md:text-5xl text-[color:var(--navy)]"
               align="left"
             />
           </div>
-          <a href="#" className="text-sm font-semibold uppercase tracking-[0.25em] text-[color:var(--navy)] border-b border-[color:var(--gold)] pb-1">
-            {tr(lang, "Semua Artikel →", "All Articles →", "جميع المقالات ←")}
-          </a>
         </div>
         <div className="grid gap-8 md:grid-cols-3">
-          {NEWS.map((a) => (
-            <article key={a.title} className="reveal group">
-              <div className="relative overflow-hidden aspect-[4/3]">
-                <img
-                  src={a.img.url}
-                  alt={tr(lang, a.title, a.titleEn, a.titleAr)}
-                  loading="lazy"
-                  className="h-full w-full object-cover transition-transform duration-700 group-hover:scale-105"
-                />
-                <span className="absolute top-4 left-4 bg-[color:var(--navy)] text-[color:var(--cream)] px-3 py-1 text-[10px] uppercase tracking-[0.25em]">
-                  {tr(lang, a.tag, a.tagEn, a.tagAr)}
+          {articles.map((a, i) => {
+            const media = INSIGHT_MEDIA[i];
+            return (
+            <Dialog key={i}>
+              <DialogTrigger asChild>
+                <article className="reveal group cursor-pointer text-left">
+                  <div className="relative overflow-hidden aspect-[4/3]">
+                    <img
+                      src={media.img.url}
+                      alt={a.title}
+                      loading="lazy"
+                      className="h-full w-full object-cover transition-transform duration-700 group-hover:scale-105"
+                    />
+                    <span className="absolute top-4 left-4 bg-[color:var(--navy)] text-[color:var(--cream)] px-3 py-1 text-[10px] uppercase tracking-[0.25em]">
+                      {a.tag}
+                    </span>
+                  </div>
+                  <div className="mt-5">
+                    <div className="text-xs uppercase tracking-[0.25em] text-[color:var(--navy)]/50">{media.date}</div>
+                    <h3 className="mt-2 font-serif text-2xl text-[color:var(--navy)] leading-snug group-hover:text-[color:var(--gold)] transition-colors">
+                      {a.title}
+                    </h3>
+                  </div>
+                </article>
+              </DialogTrigger>
+              <DialogContent className="max-h-[85vh] overflow-y-auto border-[color:var(--navy)]/10 bg-white sm:max-w-xl">
+                <DialogTitle className="sr-only">{a.title}</DialogTitle>
+                <div className="-mx-6 -mt-6 aspect-[16/9] overflow-hidden">
+                  <img
+                    src={media.img.url}
+                    alt={a.title}
+                    className="h-full w-full object-cover"
+                  />
+                </div>
+                <span className="w-fit rounded-full bg-[color:var(--navy)] px-3 py-1 text-[10px] uppercase tracking-[0.25em] text-[color:var(--cream)]">
+                  {a.tag}
                 </span>
-              </div>
-              <div className="mt-5">
-                <div className="text-xs uppercase tracking-[0.25em] text-[color:var(--navy)]/50">{a.date}</div>
-                <h3 className="mt-2 font-serif text-2xl text-[color:var(--navy)] leading-snug group-hover:text-[color:var(--gold)] transition-colors">
-                  {tr(lang, a.title, a.titleEn, a.titleAr)}
-                </h3>
-              </div>
-            </article>
-          ))}
+                <div className="text-xs uppercase tracking-[0.25em] text-[color:var(--navy)]/50">{media.date}</div>
+                <h2 className="font-serif text-2xl leading-snug text-[color:var(--navy)] md:text-3xl">
+                  {a.title}
+                </h2>
+                {a.body.split("\n\n").map((paragraph, pi) => (
+                  <p key={pi} className="text-base leading-relaxed text-[color:var(--navy)]/80">
+                    {paragraph}
+                  </p>
+                ))}
+              </DialogContent>
+            </Dialog>
+            );
+          })}
         </div>
       </div>
     </section>
   );
 }
 
-const GALLERY = [
-  { img: gal1, cap: "Tari Tradisional", capEn: "Traditional Dance", capAr: "رقصة تقليدية" },
-  { img: seniImg, cap: "Wayang Golek", capEn: "Wayang Golek", capAr: "وايانج جوليك" },
-  { img: gal3, cap: "Upacara Adat", capEn: "Traditional Ceremony", capAr: "احتفال تقليدي" },
-  { img: gal4, cap: "Gamelan", capEn: "Gamelan", capAr: "جاميلان" },
-  { img: gal2, cap: "Batik Nusantara", capEn: "Nusantara Batik", capAr: "باتيك نوسانتارا" },
-  { img: mudaImg, cap: "Anak Muda Kreatif", capEn: "Creative Youth", capAr: "شباب مبدع" },
-];
+const GALLERY_IMAGES = [gal1, seniImg, gal3, gal4, gal2, mudaImg];
 
 function Galeri() {
-  const { lang } = useLang();
+  const { t } = useTranslation();
+  const captions = t("gallery.captions", { returnObjects: true }) as string[];
   return (
     <section id="galeri" className="py-24 md:py-32">
       <div className="mx-auto max-w-7xl px-6">
         <div className="mb-14 text-center reveal">
-          <span className="eyebrow">{tr(lang, "Dokumentasi Kegiatan", "Activity Documentation", "توثيق الأنشطة")}</span>
+          <span className="eyebrow">{t("gallery.eyebrow")}</span>
           <SectionHeading
-            text={tr(lang, "Galeri", "Gallery", "المعرض")}
+            text={t("gallery.heading")}
             className="display mt-4 text-4xl md:text-5xl text-[color:var(--navy)]"
           />
           <div className="batik-divider mx-auto my-6 w-40" />
         </div>
         <div className="grid grid-cols-2 gap-3 md:grid-cols-3 md:gap-4">
-          {GALLERY.map((g, i) => {
-            const cap = tr(lang, g.cap, g.capEn, g.capAr);
-            return (
+          {captions.map((cap, i) => (
             <div
               key={i}
               className="reveal group relative aspect-square overflow-hidden rounded-2xl shadow-sm transition-shadow duration-500 hover:shadow-2xl"
             >
               <img
-                src={g.img.url}
+                src={GALLERY_IMAGES[i].url}
                 alt={cap}
                 loading="lazy"
                 className="h-full w-full object-cover transition-transform duration-700 group-hover:scale-110"
@@ -1051,61 +979,37 @@ function Galeri() {
                 <div className="font-serif text-lg text-[color:var(--cream)]">{cap}</div>
               </div>
             </div>
-            );
-          })}
+          ))}
         </div>
       </div>
     </section>
   );
 }
 
-const TESTI = [
-  {
-    q: "Dayatara membantu kami merancang program budaya yang benar-benar hidup di tengah masyarakat.",
-    qEn: "Dayatara helped us design a cultural program that truly comes alive within the community.",
-    qAr: "ساعدتنا داياتارا في تصميم برنامج ثقافي ينبض بالحياة فعلاً داخل المجتمع.",
-    a: "Mitra Korporasi", aEn: "Corporate Partner", aAr: "شريك من الشركات",
-    role: "[Placeholder testimoni]", roleEn: "[Testimonial placeholder]", roleAr: "[نص شهادة مؤقت]",
-  },
-  {
-    q: "Pendekatan kolaboratif Dayatara membuat komunitas kami merasa dilibatkan dari awal hingga akhir.",
-    qEn: "Dayatara's collaborative approach made our community feel involved from start to finish.",
-    qAr: "جعل أسلوب داياتارا التعاوني مجتمعنا يشعر بالمشاركة من البداية حتى النهاية.",
-    a: "Ketua Komunitas", aEn: "Community Leader", aAr: "قائد مجتمعي",
-    role: "[Placeholder testimoni]", roleEn: "[Testimonial placeholder]", roleAr: "[نص شهادة مؤقت]",
-  },
-  {
-    q: "Kualitas kurasi dan produksi pertunjukan mereka berkelas nasional. Sangat direkomendasikan.",
-    qEn: "The quality of their performance curation and production is world-class. Highly recommended.",
-    qAr: "جودة تنسيق وإنتاج عروضهم عالمية المستوى. أنصح بها بشدة.",
-    a: "Instansi Pemerintah", aEn: "Government Institution", aAr: "جهة حكومية",
-    role: "[Placeholder testimoni]", roleEn: "[Testimonial placeholder]", roleAr: "[نص شهادة مؤقت]",
-  },
-];
-
 function Testimoni() {
-  const { lang } = useLang();
+  const { t } = useTranslation();
+  const items = t("testimonials.items", { returnObjects: true }) as { quote: string; author: string; role: string }[];
   const [i, setI] = useState(0);
   useEffect(() => {
-    const t = setInterval(() => setI((x) => (x + 1) % TESTI.length), 6000);
-    return () => clearInterval(t);
-  }, []);
-  const c = TESTI[i];
+    const timer = setInterval(() => setI((x) => (x + 1) % items.length), 6000);
+    return () => clearInterval(timer);
+  }, [items.length]);
+  const c = items[i];
   return (
     <section className="py-24 md:py-32 bg-[color:var(--navy)] text-[color:var(--cream)] relative overflow-hidden">
       <div className="dot-grid absolute inset-0 opacity-10" />
       <div className="relative mx-auto max-w-4xl px-6 text-center">
-        <span className="eyebrow !text-[color:var(--gold)]">{tr(lang, "Testimoni", "Testimonials", "الشهادات")}</span>
+        <span className="eyebrow !text-[color:var(--gold)]">{t("testimonials.eyebrow")}</span>
         <div className="mt-8 font-serif text-6xl text-[color:var(--gold)] leading-none">"</div>
         <blockquote key={i} className="fade-up mt-4 font-serif text-2xl md:text-3xl leading-relaxed italic text-[color:var(--cream)]">
-          {tr(lang, c.q, c.qEn, c.qAr)}
+          {c.quote}
         </blockquote>
         <div className="mt-8">
-          <div className="font-serif text-lg text-[color:var(--gold)]">— {tr(lang, c.a, c.aEn, c.aAr)}</div>
-          <div className="text-xs uppercase tracking-[0.3em] text-[color:var(--cream)]/60 mt-1">{tr(lang, c.role, c.roleEn, c.roleAr)}</div>
+          <div className="font-serif text-lg text-[color:var(--gold)]">— {c.author}</div>
+          <div className="text-xs uppercase tracking-[0.3em] text-[color:var(--cream)]/60 mt-1">{c.role}</div>
         </div>
         <div className="mt-10 flex justify-center gap-2">
-          {TESTI.map((_, idx) => (
+          {items.map((_, idx) => (
             <button
               key={idx}
               onClick={() => setI(idx)}
@@ -1120,35 +1024,34 @@ function Testimoni() {
 }
 
 function Kontak() {
-  const { lang } = useLang();
+  const { t } = useTranslation();
   const [form, setForm] = useState({ name: "", email: "", message: "" });
   const waHref = `https://wa.me/6285817773695?text=${encodeURIComponent(
-    tr(
-      lang,
-      `Halo Dayatara, saya ${form.name || "-"} (${form.email || "-"}).\n${form.message || "Saya ingin berkolaborasi dengan Dayatara."}`,
-      `Hello Dayatara, I'm ${form.name || "-"} (${form.email || "-"}).\n${form.message || "I'd like to collaborate with Dayatara."}`,
-      `مرحبًا داياتارا، أنا ${form.name || "-"} (${form.email || "-"}).\n${form.message || "أرغب في التعاون مع داياتارا."}`
-    )
+    t("kontak.whatsappTemplate", {
+      name: form.name || "-",
+      email: form.email || "-",
+      message: form.message || t("kontak.whatsappDefaultMessage"),
+    })
   )}`;
   const CONTACTS = [
-    { Icon: Phone, label: "WhatsApp", labelEn: "WhatsApp", labelAr: "واتساب", value: "0858-1777-3695", href: "https://wa.me/6285817773695" },
-    { Icon: Mail, label: "Email", labelEn: "Email", labelAr: "البريد الإلكتروني", value: "dayataranusantara@gmail.com", href: "mailto:dayataranusantara@gmail.com" },
-    { Icon: MapPin, label: "Alamat", labelEn: "Address", labelAr: "العنوان", value: "Jalan Mangunsarkoro No. 1, Menteng, Jakarta Pusat" },
+    { key: "whatsapp", Icon: Phone, value: "0858-1777-3695", href: "https://wa.me/6285817773695" },
+    { key: "email", Icon: Mail, value: "dayataranusantara@gmail.com", href: "mailto:dayataranusantara@gmail.com" },
+    { key: "address", Icon: MapPin, value: "Jalan Mangunsarkoro No. 1, Menteng, Jakarta Pusat" },
   ];
   return (
     <section id="kontak" className="py-24 md:py-32 bg-[color:var(--cream)]">
       <div className="mx-auto max-w-7xl px-6">
         <div className="grid items-start gap-12 lg:grid-cols-2">
           <div className="reveal">
-            <span className="eyebrow">{tr(lang, "Kontak", "Contact", "التواصل")}</span>
+            <span className="eyebrow">{t("kontak.eyebrow")}</span>
             <SectionHeading
-              text={tr(lang, "Mari Bicara.", "Let's Talk.", "لنتحدث.")}
+              text={t("kontak.heading")}
               className="display mt-4 text-4xl md:text-5xl text-[color:var(--navy)]"
               align="left"
             />
             <div className="batik-divider my-6 w-32" />
             <p className="max-w-md text-lg text-[color:var(--navy)]/70">
-              {tr(lang, "Konsultasikan kebutuhan kolaborasi budaya Anda. Tim kami siap merespons dengan cepat.", "Consult your cultural collaboration needs. Our team is ready to respond quickly.", "استشرنا بشأن احتياجات تعاونكم الثقافي. فريقنا جاهز للرد بسرعة.")}
+              {t("kontak.desc")}
             </p>
             <div className="mt-10 space-y-5">
               {CONTACTS.map((c) => {
@@ -1158,17 +1061,17 @@ function Kontak() {
                       <c.Icon size={20} strokeWidth={1.75} />
                     </span>
                     <div>
-                      <div className="text-xs uppercase tracking-[0.25em] text-[color:var(--navy)]/50">{tr(lang, c.label, c.labelEn, c.labelAr)}</div>
+                      <div className="text-xs uppercase tracking-[0.25em] text-[color:var(--navy)]/50">{t(`kontak.labels.${c.key}`)}</div>
                       <div className="font-serif text-lg text-[color:var(--navy)]">{c.value}</div>
                     </div>
                   </>
                 );
                 return c.href ? (
-                  <a key={c.label} href={c.href} target="_blank" rel="noopener noreferrer" className="group flex items-center gap-4">
+                  <a key={c.key} href={c.href} target="_blank" rel="noopener noreferrer" className="group flex items-center gap-4">
                     {content}
                   </a>
                 ) : (
-                  <div key={c.label} className="flex items-center gap-4">
+                  <div key={c.key} className="flex items-center gap-4">
                     {content}
                   </div>
                 );
@@ -1177,9 +1080,9 @@ function Kontak() {
           </div>
 
           <div className="reveal rounded-3xl border border-[color:var(--navy)]/10 bg-white p-8 shadow-xl md:p-10">
-            <h3 className="font-serif text-2xl text-[color:var(--navy)]">{tr(lang, "Kirim Pesan", "Send Message", "أرسل رسالة")}</h3>
+            <h3 className="font-serif text-2xl text-[color:var(--navy)]">{t("kontak.formHeading")}</h3>
             <p className="mt-2 text-sm text-[color:var(--navy)]/60">
-              {tr(lang, "Isi form berikut — kami akan menghubungi Anda melalui WhatsApp.", "Fill out the form below — we'll get in touch with you via WhatsApp.", "املأ النموذج التالي — وسنتواصل معك عبر واتساب.")}
+              {t("kontak.formDesc")}
             </p>
             <form
               className="mt-8 space-y-5"
@@ -1190,12 +1093,12 @@ function Kontak() {
             >
               <div className="grid gap-5 sm:grid-cols-2">
                 <label className="block">
-                  <span className="text-xs uppercase tracking-[0.2em] text-[color:var(--navy)]/60">{tr(lang, "Nama", "Name", "الاسم")}</span>
+                  <span className="text-xs uppercase tracking-[0.2em] text-[color:var(--navy)]/60">{t("kontak.nameLabel")}</span>
                   <input
                     required
                     value={form.name}
                     onChange={(e) => setForm((f) => ({ ...f, name: e.target.value }))}
-                    placeholder={tr(lang, "Nama Anda", "Your name", "اسمك")}
+                    placeholder={t("kontak.namePlaceholder")}
                     className="mt-2 w-full rounded-xl border border-[color:var(--navy)]/15 bg-transparent px-4 py-3 text-[color:var(--navy)] outline-none transition-colors focus:border-[color:var(--gold)]"
                   />
                 </label>
@@ -1206,19 +1109,19 @@ function Kontak() {
                     required
                     value={form.email}
                     onChange={(e) => setForm((f) => ({ ...f, email: e.target.value }))}
-                    placeholder={tr(lang, "nama@perusahaan.com", "you@company.com", "you@company.com")}
+                    placeholder={t("kontak.emailPlaceholder")}
                     className="mt-2 w-full rounded-xl border border-[color:var(--navy)]/15 bg-transparent px-4 py-3 text-[color:var(--navy)] outline-none transition-colors focus:border-[color:var(--gold)]"
                   />
                 </label>
               </div>
               <label className="block">
-                <span className="text-xs uppercase tracking-[0.2em] text-[color:var(--navy)]/60">{tr(lang, "Pesan", "Message", "الرسالة")}</span>
+                <span className="text-xs uppercase tracking-[0.2em] text-[color:var(--navy)]/60">{t("kontak.messageLabel")}</span>
                 <textarea
                   required
                   rows={4}
                   value={form.message}
                   onChange={(e) => setForm((f) => ({ ...f, message: e.target.value }))}
-                  placeholder={tr(lang, "Ceritakan kebutuhan kolaborasi Anda…", "Tell us about your collaboration needs…", "أخبرنا عن احتياجات تعاونك…")}
+                  placeholder={t("kontak.messagePlaceholder")}
                   className="mt-2 w-full resize-none rounded-xl border border-[color:var(--navy)]/15 bg-transparent px-4 py-3 text-[color:var(--navy)] outline-none transition-colors focus:border-[color:var(--gold)]"
                 />
               </label>
@@ -1226,7 +1129,7 @@ function Kontak() {
                 type="submit"
                 className="inline-flex w-full items-center justify-center gap-2 rounded-full bg-[color:var(--navy)] px-8 py-4 text-sm font-semibold uppercase tracking-[0.2em] text-[color:var(--cream)] transition-colors hover:bg-[color:var(--gold)] hover:text-[color:var(--navy)]"
               >
-                {tr(lang, "Kirim Pesan", "Send Message", "أرسل رسالة")} <ArrowRight size={16} />
+                {t("kontak.submit")} <ArrowRight size={16} />
               </button>
             </form>
           </div>
@@ -1237,31 +1140,31 @@ function Kontak() {
 }
 
 const SOCIAL_LINKS = [
-  { label: "WhatsApp", labelEn: "WhatsApp", labelAr: "واتساب", Icon: WhatsAppIcon, href: "https://wa.me/6285817773695" },
-  { label: "Email", labelEn: "Email", labelAr: "البريد الإلكتروني", Icon: Mail, href: "mailto:dayataranusantara@gmail.com" },
-  { label: "Website", labelEn: "Website", labelAr: "الموقع الإلكتروني", Icon: Globe, href: "https://dayataranusantara.com" },
-  { label: "Instagram", labelEn: "Instagram", labelAr: "إنستغرام", Icon: Instagram, href: "https://instagram.com/dayatarafest" },
-  { label: "Facebook", labelEn: "Facebook", labelAr: "فيسبوك", Icon: Facebook, href: "https://facebook.com/dayatarafest" },
-  { label: "TikTok", labelEn: "TikTok", labelAr: "تيك توك", Icon: TikTokIcon, href: "https://tiktok.com/@dayatarafest" },
-  { label: "YouTube", labelEn: "YouTube", labelAr: "يوتيوب", Icon: Youtube, href: "https://youtube.com/@dayatarafest" },
-  { label: "Spotify", labelEn: "Spotify", labelAr: "سبوتيفاي", Icon: SpotifyIcon, href: "https://open.spotify.com/user/dayatarafest" },
+  { key: "whatsapp", Icon: WhatsAppIcon, href: "https://wa.me/6285817773695" },
+  { key: "email", Icon: Mail, href: "mailto:dayataranusantara@gmail.com" },
+  { key: "website", Icon: Globe, href: "https://dayataranusantara.com" },
+  { key: "instagram", Icon: Instagram, href: "https://instagram.com/dayatarafest" },
+  { key: "facebook", Icon: Facebook, href: "https://facebook.com/dayatarafest" },
+  { key: "tiktok", Icon: TikTokIcon, href: "https://tiktok.com/@dayatarafest" },
+  { key: "youtube", Icon: Youtube, href: "https://youtube.com/@dayatarafest" },
+  { key: "spotify", Icon: SpotifyIcon, href: "https://open.spotify.com/user/dayatarafest" },
 ];
 
 function SocialMedia() {
-  const { lang } = useLang();
+  const { t } = useTranslation();
   return (
     <section className="py-24 md:py-32 bg-[color:var(--cream)]">
       <div className="mx-auto max-w-7xl px-6 text-center reveal">
-        <span className="eyebrow">{tr(lang, "Terhubung Dengan Kami", "Stay Connected", "تواصل معنا")}</span>
+        <span className="eyebrow">{t("socialMedia.eyebrow")}</span>
         <SectionHeading
-          text={tr(lang, "Media Sosial Kami.", "Our Social Media.", "وسائل تواصلنا الاجتماعي.")}
+          text={t("socialMedia.heading")}
           className="display mt-4 text-4xl md:text-5xl text-[color:var(--navy)]"
         />
         <div className="batik-divider mx-auto my-6 w-40" />
         <div className="mt-12 flex flex-wrap justify-center gap-6 sm:gap-8">
           {SOCIAL_LINKS.map((s) => (
             <a
-              key={s.label}
+              key={s.key}
               href={s.href}
               target="_blank"
               rel="noopener noreferrer"
@@ -1271,7 +1174,7 @@ function SocialMedia() {
                 <s.Icon size={26} />
               </span>
               <span className="text-xs uppercase tracking-[0.15em] text-[color:var(--navy)]/70 transition-colors group-hover:text-[color:var(--gold)]">
-                {tr(lang, s.label, s.labelEn, s.labelAr)}
+                {t(`socialMedia.labels.${s.key}`)}
               </span>
             </a>
           ))}
@@ -1282,7 +1185,7 @@ function SocialMedia() {
 }
 
 function Footer() {
-  const { lang } = useLang();
+  const { t } = useTranslation();
   return (
     <footer className="bg-[color:var(--navy)] text-[color:var(--cream)] pt-24 pb-10">
       <div className="mx-auto max-w-7xl px-6">
@@ -1296,12 +1199,7 @@ function Footer() {
               </div>
             </div>
             <p className="mt-6 max-w-md text-[color:var(--cream)]/75 leading-relaxed">
-              {tr(
-                lang,
-                "Yayasan Daya Cipta Budaya Nusantara — ruang tumbuh bagi daya cipta Nusantara. Mari berkolaborasi menghidupkan budaya bersama kami.",
-                "Yayasan Daya Cipta Budaya Nusantara — a growing space for Nusantara's creative energy. Let's collaborate to bring culture to life together.",
-                "مؤسسة داياتارا للإبداع الثقافي — مساحة نمو للإبداع في نوسانتارا. لنتعاون معًا لإحياء الثقافة."
-              )}
+              {t("footer.desc")}
             </p>
             <div className="mt-8 flex gap-3">
               {["Instagram", "Facebook", "TikTok", "YouTube", "Spotify"].map((s) => (
@@ -1318,7 +1216,7 @@ function Footer() {
             <div className="mt-4 text-xs uppercase tracking-[0.25em] text-[color:var(--cream)]/60">@dayatarafest</div>
           </div>
           <div>
-            <h4 className="font-serif text-xs uppercase tracking-[0.3em] text-[color:var(--gold)]">{tr(lang, "Kontak", "Contact", "التواصل")}</h4>
+            <h4 className="font-serif text-xs uppercase tracking-[0.3em] text-[color:var(--gold)]">{t("footer.contactHeading")}</h4>
             <ul className="mt-6 space-y-3 text-sm text-[color:var(--cream)]/85">
               <li>
                 <div className="text-[color:var(--cream)]/50 text-xs uppercase tracking-widest">Email</div>
@@ -1335,7 +1233,7 @@ function Footer() {
             </ul>
           </div>
           <div>
-            <h4 className="font-serif text-xs uppercase tracking-[0.3em] text-[color:var(--gold)]">{tr(lang, "Kantor", "Office", "المكتب")}</h4>
+            <h4 className="font-serif text-xs uppercase tracking-[0.3em] text-[color:var(--gold)]">{t("footer.officeHeading")}</h4>
             <ul className="mt-6 space-y-5 text-sm text-[color:var(--cream)]/85">
               <li>
                 <div className="text-[color:var(--cream)]/50 text-xs uppercase tracking-widest">Jakarta</div>
@@ -1369,82 +1267,28 @@ function Footer() {
 }
 
 function Index() {
-  const { lang, setLang, showGate } = useLanguage();
-  useReveal(lang);
+  const { i18n } = useTranslation();
+  const { showGate, selectLanguage } = useLanguageGate();
+  useReveal(i18n.language);
   return (
-    <LanguageContext.Provider value={{ lang, setLang }}>
     <main className="min-h-screen bg-[color:var(--cream)]">
-      {showGate && <LanguageGate onSelect={setLang} />}
+      {showGate && <LanguageGate onSelect={selectLanguage} />}
       <Nav />
       <Hero />
       <Beranda />
-      <PillarSection
-        id="seni"
-        eyebrow={{ id: "Pilar 01", en: "Pillar 01", ar: "الركيزة 01" }}
-        title={{ id: "Seni Budaya Nusantara", en: "Nusantara Arts & Culture", ar: "فنون وثقافة نوسانتارا" }}
-        image={seniImg}
-        body={[
-          {
-            id: "Program pengembangan seni dan budaya tradisional — dari wayang, tari, musik tradisional, hingga teater — dengan pendekatan yang menghubungkan warisan dan kehidupan hari ini.",
-            en: "A development program for traditional arts and culture — from wayang, dance, and traditional music to theatre — with an approach that connects heritage with life today.",
-            ar: "برنامج لتطوير الفنون والثقافة التقليدية — من الوايانج والرقص والموسيقى التقليدية إلى المسرح — بأسلوب يربط التراث بالحياة اليوم.",
-          },
-          {
-            id: "Kami memfasilitasi kurasi pertunjukan, produksi karya, serta ruang berkarya bagi seniman lintas generasi di seluruh Nusantara.",
-            en: "We facilitate performance curation, creative production, and creative space for artists across generations throughout Nusantara.",
-            ar: "نوفر تنسيق العروض والإنتاج الإبداعي ومساحة عمل للفنانين من مختلف الأجيال في جميع أنحاء نوسانتارا.",
-          },
-        ]}
-      />
-      <PillarSection
-        id="umkm"
-        eyebrow={{ id: "Pilar 02", en: "Pillar 02", ar: "الركيزة 02" }}
-        title={{ id: "UMKM & Ekonomi Kreatif", en: "SMEs & Creative Economy", ar: "المشروعات الصغيرة والاقتصاد الإبداعي" }}
-        image={umkmImg}
-        reverse
-        tone="navy"
-        body={[
-          {
-            id: "Memberdayakan pelaku UMKM berbasis budaya melalui pendampingan, pelatihan, pengembangan produk, hingga akses pasar.",
-            en: "Empowering culture-based SMEs through mentoring, training, product development, and market access.",
-            ar: "تمكين أصحاب المشروعات الصغيرة القائمة على الثقافة من خلال الإرشاد والتدريب وتطوير المنتجات والوصول إلى الأسواق.",
-          },
-          {
-            id: "Membangun ekosistem ekonomi kreatif yang berkelanjutan, adil, dan berakar pada kearifan lokal.",
-            en: "Building a sustainable, fair creative economy ecosystem rooted in local wisdom.",
-            ar: "بناء منظومة اقتصاد إبداعي مستدامة وعادلة ومتجذرة في الحكمة المحلية.",
-          },
-        ]}
-      />
-      <PillarSection
-        id="muda"
-        eyebrow={{ id: "Pilar 03", en: "Pillar 03", ar: "الركيزة 03" }}
-        title={{ id: "Kreatifitas Muda", en: "Youth Creativity", ar: "إبداع الشباب" }}
-        image={mudaImg}
-        body={[
-          {
-            id: "Membuka ruang bagi generasi muda untuk berkarya, berkolaborasi, dan menemukan suara mereka melalui bahasa budaya.",
-            en: "Opening space for the younger generation to create, collaborate, and find their voice through the language of culture.",
-            ar: "فتح المجال أمام جيل الشباب للإبداع والتعاون وإيجاد صوتهم من خلال لغة الثقافة.",
-          },
-          {
-            id: "Lokakarya, residensi, dan program mentoring lintas disiplin — dari seni, media, hingga wirausaha kreatif.",
-            en: "Workshops, residencies, and cross-disciplinary mentoring programs — from arts and media to creative entrepreneurship.",
-            ar: "ورش عمل وإقامات فنية وبرامج إرشاد متعددة التخصصات — من الفنون والإعلام إلى ريادة الأعمال الإبداعية.",
-          },
-        ]}
-      />
+      <PillarSection id="seni" translationKey="seni" image={seniImg} />
+      <PillarSection id="umkm" translationKey="umkm" image={umkmImg} reverse tone="navy" />
+      <PillarSection id="muda" translationKey="muda" image={mudaImg} />
       <Layanan />
       <ValuesWhy />
       <Struktur />
       <Portofolio />
-      <News />
+      <Insight />
       <Galeri />
       <Testimoni />
       <SocialMedia />
       <Kontak />
       <Footer />
     </main>
-    </LanguageContext.Provider>
   );
 }
