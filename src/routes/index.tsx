@@ -29,6 +29,7 @@ import {
   Instagram,
   Facebook,
   Youtube,
+  ChevronDown,
 } from "lucide-react";
 import { DayataraLogo } from "@/components/DayataraLogo";
 import SplitText from "@/components/SplitText/SplitText";
@@ -80,14 +81,29 @@ function SpotifyIcon({ size = 20 }: { size?: number }) {
 
 const NAV = [
   { href: "#beranda", key: "home" },
-  { href: "#seni", key: "artsCulture" },
-  { href: "#umkm", key: "smes" },
-  { href: "#muda", key: "youthCreativity" },
+  { href: "#tentang-kami", key: "about" },
+  {
+    key: "pillars",
+    dropdown: [
+      { href: "#seni", key: "artsCulture" },
+      { href: "#umkm", key: "smes" },
+      { href: "#muda", key: "youthCreativity" },
+    ],
+  },
   { href: "#layanan", key: "services" },
+  {
+    key: "programs",
+    dropdown: [
+      { href: "#program-seni", productIndex: 0 },
+      { href: "#program-umkm", productIndex: 1 },
+      { href: "#program-muda", productIndex: 2 },
+      { href: "#program-digital", productIndex: 3 },
+    ],
+  },
   { href: "#insight", key: "insight" },
   { href: "#galeri", key: "gallery" },
   { href: "#kontak", key: "contact" },
-];
+] as const;
 
 /**
  * Re-scans for `.reveal` elements whenever `rescanKey` changes (e.g. the active
@@ -173,14 +189,16 @@ function SectionHeading({
 /** Shows the language picker on first visit, then remembers the choice in localStorage and syncs <html dir/lang>. */
 function useLanguageGate() {
   const { i18n } = useTranslation();
-  const [showGate, setShowGate] = useState(false);
+  // Default to showing the gate so it's the first thing painted (both on the
+  // server and on the client's first render), instead of briefly flashing the
+  // site content before the "no stored language yet" check resolves.
+  const [showGate, setShowGate] = useState(true);
 
   useEffect(() => {
     const stored = window.localStorage.getItem(LANG_STORAGE_KEY);
     if (stored) {
       if (stored !== i18n.language) i18n.changeLanguage(stored);
-    } else {
-      setShowGate(true);
+      setShowGate(false);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
@@ -266,8 +284,41 @@ function LangSwitcher() {
   );
 }
 
+function NavDropdown({ label, items }: { label: string; items: { href: string; label: string }[] }) {
+  const [open, setOpen] = useState(false);
+  return (
+    <div className="relative">
+      <button
+        onClick={() => setOpen((v) => !v)}
+        className="flex items-center gap-1 whitespace-nowrap text-xs font-semibold uppercase tracking-[0.15em] text-[color:var(--cream)]/85 transition-colors hover:text-[color:var(--gold)] xl:tracking-[0.2em]"
+      >
+        {label}
+        <ChevronDown size={12} className={`transition-transform ${open ? "rotate-180" : ""}`} />
+      </button>
+      {open && (
+        <>
+          <div className="fixed inset-0 z-40" onClick={() => setOpen(false)} />
+          <div className="absolute left-0 z-50 mt-3 w-64 overflow-hidden rounded-xl border border-[color:var(--gold)]/30 bg-[color:var(--navy)] shadow-xl">
+            {items.map((item) => (
+              <a
+                key={item.href}
+                href={item.href}
+                onClick={() => setOpen(false)}
+                className="block px-4 py-2.5 text-left text-sm text-[color:var(--cream)]/85 transition-colors hover:bg-[color:var(--gold)]/10 hover:text-[color:var(--gold)]"
+              >
+                {item.label}
+              </a>
+            ))}
+          </div>
+        </>
+      )}
+    </div>
+  );
+}
+
 function Nav() {
   const { t } = useTranslation();
+  const products = t("layanan.products", { returnObjects: true }) as { title: string }[];
   const [open, setOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
   useEffect(() => {
@@ -295,15 +346,26 @@ function Nav() {
           </div>
         </a>
         <nav className="hidden items-center gap-5 xl:gap-7 lg:flex">
-          {NAV.map((n) => (
-            <a
-              key={n.href}
-              href={n.href}
-              className="whitespace-nowrap text-xs font-semibold uppercase tracking-[0.15em] text-[color:var(--cream)]/85 hover:text-[color:var(--gold)] transition-colors xl:tracking-[0.2em]"
-            >
-              {t(`nav.${n.key}`)}
-            </a>
-          ))}
+          {NAV.map((n) =>
+            "dropdown" in n ? (
+              <NavDropdown
+                key={n.key}
+                label={t(`nav.${n.key}`)}
+                items={n.dropdown.map((d) => ({
+                  href: d.href,
+                  label: "productIndex" in d ? products[d.productIndex]?.title ?? "" : t(`nav.${d.key}`),
+                }))}
+              />
+            ) : (
+              <a
+                key={n.href}
+                href={n.href}
+                className="whitespace-nowrap text-xs font-semibold uppercase tracking-[0.15em] text-[color:var(--cream)]/85 hover:text-[color:var(--gold)] transition-colors xl:tracking-[0.2em]"
+              >
+                {t(`nav.${n.key}`)}
+              </a>
+            )
+          )}
         </nav>
         <div className="hidden items-center gap-4 lg:flex">
           <LangSwitcher />
@@ -330,16 +392,36 @@ function Nav() {
       {open && (
         <div className="lg:hidden bg-[color:var(--navy)] border-t border-[color:var(--gold)]/30">
           <nav className="flex flex-col px-6 py-4">
-            {NAV.map((n) => (
-              <a
-                key={n.href}
-                href={n.href}
-                onClick={() => setOpen(false)}
-                className="py-3 text-sm font-semibold uppercase tracking-[0.2em] text-[color:var(--cream)]/90 hover:text-[color:var(--gold)]"
-              >
-                {t(`nav.${n.key}`)}
-              </a>
-            ))}
+            {NAV.map((n) =>
+              "dropdown" in n ? (
+                <div key={n.key} className="py-2">
+                  <div className="py-1 text-sm font-semibold uppercase tracking-[0.2em] text-[color:var(--gold)]">
+                    {t(`nav.${n.key}`)}
+                  </div>
+                  <div className="flex flex-col border-l border-[color:var(--gold)]/20 pl-4">
+                    {n.dropdown.map((d) => (
+                      <a
+                        key={d.href}
+                        href={d.href}
+                        onClick={() => setOpen(false)}
+                        className="py-2 text-sm text-[color:var(--cream)]/80 hover:text-[color:var(--gold)]"
+                      >
+                        {"productIndex" in d ? products[d.productIndex]?.title ?? "" : t(`nav.${d.key}`)}
+                      </a>
+                    ))}
+                  </div>
+                </div>
+              ) : (
+                <a
+                  key={n.href}
+                  href={n.href}
+                  onClick={() => setOpen(false)}
+                  className="py-3 text-sm font-semibold uppercase tracking-[0.2em] text-[color:var(--cream)]/90 hover:text-[color:var(--gold)]"
+                >
+                  {t(`nav.${n.key}`)}
+                </a>
+              )
+            )}
           </nav>
         </div>
       )}
@@ -412,7 +494,7 @@ function Beranda() {
   ];
   const pillars = t("beranda.pillars", { returnObjects: true }) as { title: string; desc: string }[];
   return (
-    <section className="relative py-24 md:py-32">
+    <section id="tentang-kami" className="relative py-24 md:py-32">
       <div className="mx-auto max-w-7xl px-6">
         <div className="grid gap-16 lg:grid-cols-12">
           <div className="lg:col-span-5 reveal">
@@ -556,11 +638,11 @@ function PillarSection({
 }
 
 const SERVICE_ICONS = [Compass, Lightbulb, Users, Leaf, GraduationCap, Microscope, Palette];
-const PRODUCT_MEDIA: ({ image: { url: string } } | { Icon: typeof Megaphone })[] = [
-  { image: seniImg },
-  { image: umkmImg },
-  { image: mudaImg },
-  { Icon: Megaphone },
+const PRODUCT_MEDIA: ({ slug: string; image: { url: string } } | { slug: string; Icon: typeof Megaphone })[] = [
+  { slug: "program-seni", image: seniImg },
+  { slug: "program-umkm", image: umkmImg },
+  { slug: "program-muda", image: mudaImg },
+  { slug: "program-digital", Icon: Megaphone },
 ];
 
 function Layanan() {
@@ -618,7 +700,8 @@ function Layanan() {
                 return (
                 <div
                   key={i}
-                  className="group overflow-hidden rounded-2xl border border-[color:var(--cream)]/15 bg-[color:var(--cream)]/5 transition-all hover:-translate-y-1 hover:border-[color:var(--gold)] hover:bg-[color:var(--cream)]/10"
+                  id={media.slug}
+                  className="group scroll-mt-24 overflow-hidden rounded-2xl border border-[color:var(--cream)]/15 bg-[color:var(--cream)]/5 transition-all hover:-translate-y-1 hover:border-[color:var(--gold)] hover:bg-[color:var(--cream)]/10"
                 >
                   <div className="relative aspect-[4/3] w-full overflow-hidden">
                     {"image" in media ? (

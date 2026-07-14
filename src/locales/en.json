@@ -8,7 +8,10 @@
     "insight": "Insight",
     "gallery": "Gallery",
     "contact": "Contact",
-    "collaborate": "Collaborate"
+    "collaborate": "Collaborate",
+    "about": "About Us",
+    "pillars": "Pillars",
+    "programs": "Programs"
   },
   "hero": {
     "imageAlt": "Traditional Nusantara dancer",
@@ -29,9 +32,18 @@
     "focusEyebrow": "Our Focus",
     "focusHeading": "Pillars at Dayatara.",
     "pillars": [
-      { "title": "Nusantara Arts & Culture", "desc": "Development of traditional arts & culture — wayang, dance, music, and theatre." },
-      { "title": "SMEs & Creative Economy", "desc": "Empowering culture-based SMEs to grow and compete." },
-      { "title": "Youth Creativity", "desc": "Opening space for the younger generation to create, collaborate, and make an impact." }
+      {
+        "title": "Nusantara Arts & Culture",
+        "desc": "Development of traditional arts & culture — wayang, dance, music, and theatre."
+      },
+      {
+        "title": "SMEs & Creative Economy",
+        "desc": "Empowering culture-based SMEs to grow and compete."
+      },
+      {
+        "title": "Youth Creativity",
+        "desc": "Opening space for the younger generation to create, collaborate, and make an impact."
+      }
     ]
   },
   "pillarSection": {
@@ -69,32 +81,76 @@
     "heading": "Our Services",
     "desc": "Seven core services connecting culture with our partners' needs.",
     "services": [
-      { "title": "Strategic Consultant", "desc": "Culture-based strategic planning for institutions, corporations, and government." },
-      { "title": "Creative Development", "desc": "Developing creative concepts, ideas, and narratives rooted in local wisdom." },
-      { "title": "Community Engagement", "desc": "Building local community engagement through a participatory approach." },
-      { "title": "Sustainability Solutions", "desc": "Sustainable programs connecting culture with the environment & society." },
-      { "title": "Capacity Building & Training", "desc": "Training and capacity development for artists and SME actors." },
-      { "title": "Research & Development", "desc": "Cultural research, documentation, and development of Nusantara knowledge." },
-      { "title": "Art & Culture Performance", "desc": "High-quality arts & culture performance production." }
+      {
+        "title": "Strategic Consultant",
+        "desc": "Culture-based strategic planning for institutions, corporations, and government."
+      },
+      {
+        "title": "Creative Development",
+        "desc": "Developing creative concepts, ideas, and narratives rooted in local wisdom."
+      },
+      {
+        "title": "Community Engagement",
+        "desc": "Building local community engagement through a participatory approach."
+      },
+      {
+        "title": "Sustainability Solutions",
+        "desc": "Sustainable programs connecting culture with the environment & society."
+      },
+      {
+        "title": "Capacity Building & Training",
+        "desc": "Training and capacity development for artists and SME actors."
+      },
+      {
+        "title": "Research & Development",
+        "desc": "Cultural research, documentation, and development of Nusantara knowledge."
+      },
+      {
+        "title": "Art & Culture Performance",
+        "desc": "High-quality arts & culture performance production."
+      }
     ],
     "productsEyebrow": "Featured Programs",
     "productsHeading": "Our four program pillars.",
     "products": [
-      { "title": "Nusantara Arts & Culture Development" },
-      { "title": "SME & Creative Economy Empowerment" },
-      { "title": "Youth Creativity Development" },
-      { "title": "Media & Digital Promotion" }
+      {
+        "title": "Nusantara Arts & Culture Development"
+      },
+      {
+        "title": "SME & Creative Economy Empowerment"
+      },
+      {
+        "title": "Youth Creativity Development"
+      },
+      {
+        "title": "Media & Digital Promotion"
+      }
     ]
   },
   "values": {
     "eyebrow": "Our Foundation",
     "heading": "Foundation Values",
     "items": [
-      { "title": "Integrity", "desc": "Upholding honesty and responsibility in every step." },
-      { "title": "Collaboration", "desc": "Collaboration across communities, generations, and institutions." },
-      { "title": "Innovation", "desc": "Bringing fresh ideas rooted in tradition." },
-      { "title": "Sustainability", "desc": "Programs with long-term impact." },
-      { "title": "Excellence", "desc": "The highest standard in every work and service." }
+      {
+        "title": "Integrity",
+        "desc": "Upholding honesty and responsibility in every step."
+      },
+      {
+        "title": "Collaboration",
+        "desc": "Collaboration across communities, generations, and institutions."
+      },
+      {
+        "title": "Innovation",
+        "desc": "Bringing fresh ideas rooted in tradition."
+      },
+      {
+        "title": "Sustainability",
+        "desc": "Programs with long-term impact."
+      },
+      {
+        "title": "Excellence",
+        "desc": "The highest standard in every work and service."
+      }
     ]
   },
   "why": {
@@ -102,22 +158,52 @@
     "headingLead": "Why choose",
     "desc": "More than two decades of experience working with communities, corporations, and government across Nusantara.",
     "items": [
-      { "title": "Experienced Team", "desc": "More than two decades working in the culture and creative industry." },
-      { "title": "Needs-Based Solutions", "desc": "Every program is designed to fit our partners' context and goals." },
-      { "title": "Collaborative Approach", "desc": "Involving communities and cultural actors from start to finish." },
-      { "title": "Results-Oriented", "desc": "Focused on real impact, not just ceremony." },
-      { "title": "Extensive Network", "desc": "Connected with government, corporations, and communities across Nusantara." }
+      {
+        "title": "Experienced Team",
+        "desc": "More than two decades working in the culture and creative industry."
+      },
+      {
+        "title": "Needs-Based Solutions",
+        "desc": "Every program is designed to fit our partners' context and goals."
+      },
+      {
+        "title": "Collaborative Approach",
+        "desc": "Involving communities and cultural actors from start to finish."
+      },
+      {
+        "title": "Results-Oriented",
+        "desc": "Focused on real impact, not just ceremony."
+      },
+      {
+        "title": "Extensive Network",
+        "desc": "Connected with government, corporations, and communities across Nusantara."
+      }
     ]
   },
   "struktur": {
     "eyebrow": "Organization",
     "heading": "Organizational Structure",
     "roles": {
-      "boardOfAdvisors": { "label": "Board of Advisors", "desc": "Provides strategic direction and safeguards the foundation's long-term vision and mission." },
-      "boardOfSupervisors": { "label": "Board of Supervisors", "desc": "Oversees program implementation and governance to keep the foundation accountable." },
-      "chairman": { "label": "Chairman", "desc": "Leads the foundation's strategic direction and coordinates all programs and partnerships." },
-      "secretary": { "label": "Secretary", "desc": "Manages the foundation's administration, documentation, and institutional communication." },
-      "treasurer": { "label": "Treasurer", "desc": "Responsible for the foundation's financial management and transparent budget reporting." }
+      "boardOfAdvisors": {
+        "label": "Board of Advisors",
+        "desc": "Provides strategic direction and safeguards the foundation's long-term vision and mission."
+      },
+      "boardOfSupervisors": {
+        "label": "Board of Supervisors",
+        "desc": "Oversees program implementation and governance to keep the foundation accountable."
+      },
+      "chairman": {
+        "label": "Chairman",
+        "desc": "Leads the foundation's strategic direction and coordinates all programs and partnerships."
+      },
+      "secretary": {
+        "label": "Secretary",
+        "desc": "Manages the foundation's administration, documentation, and institutional communication."
+      },
+      "treasurer": {
+        "label": "Treasurer",
+        "desc": "Responsible for the foundation's financial management and transparent budget reporting."
+      }
     }
   },
   "portfolio": {
@@ -126,15 +212,35 @@
     "categories": {
       "government": {
         "label": "Government",
-        "items": ["Ministry of Environment", "Ministry of Health", "Ministry of Agriculture", "Ministry of Tourism", "Ministry of SMEs & Cooperatives", "Ministry of Marine Affairs & Fisheries"]
+        "items": [
+          "Ministry of Environment",
+          "Ministry of Health",
+          "Ministry of Agriculture",
+          "Ministry of Tourism",
+          "Ministry of SMEs & Cooperatives",
+          "Ministry of Marine Affairs & Fisheries"
+        ]
       },
       "corporate": {
         "label": "Corporate",
-        "items": ["Bank Mandiri", "Pertamina", "Jaya Ancol", "Pelindo"]
+        "items": [
+          "Bank Mandiri",
+          "Pertamina",
+          "Jaya Ancol",
+          "Pelindo"
+        ]
       },
       "community": {
         "label": "Community",
-        "items": ["Kadin", "KNPI", "Pemuda Pancasila", "Pakutho", "Pakuwojo", "Komppi", "Persada BUMD"]
+        "items": [
+          "Kadin",
+          "KNPI",
+          "Pemuda Pancasila",
+          "Pakutho",
+          "Pakuwojo",
+          "Komppi",
+          "Persada BUMD"
+        ]
       }
     }
   },
@@ -162,14 +268,33 @@
   "gallery": {
     "eyebrow": "Activity Documentation",
     "heading": "Gallery",
-    "captions": ["Traditional Dance", "Wayang Golek", "Traditional Ceremony", "Gamelan", "Nusantara Batik", "Creative Youth"]
+    "captions": [
+      "Traditional Dance",
+      "Wayang Golek",
+      "Traditional Ceremony",
+      "Gamelan",
+      "Nusantara Batik",
+      "Creative Youth"
+    ]
   },
   "testimonials": {
     "eyebrow": "Testimonials",
     "items": [
-      { "quote": "Dayatara helped us design a cultural program that truly comes alive within the community.", "author": "Corporate Partner", "role": "[Testimonial placeholder]" },
-      { "quote": "Dayatara's collaborative approach made our community feel involved from start to finish.", "author": "Community Leader", "role": "[Testimonial placeholder]" },
-      { "quote": "The quality of their performance curation and production is world-class. Highly recommended.", "author": "Government Institution", "role": "[Testimonial placeholder]" }
+      {
+        "quote": "Dayatara helped us design a cultural program that truly comes alive within the community.",
+        "author": "Corporate Partner",
+        "role": "[Testimonial placeholder]"
+      },
+      {
+        "quote": "Dayatara's collaborative approach made our community feel involved from start to finish.",
+        "author": "Community Leader",
+        "role": "[Testimonial placeholder]"
+      },
+      {
+        "quote": "The quality of their performance curation and production is world-class. Highly recommended.",
+        "author": "Government Institution",
+        "role": "[Testimonial placeholder]"
+      }
     ]
   },
   "socialMedia": {

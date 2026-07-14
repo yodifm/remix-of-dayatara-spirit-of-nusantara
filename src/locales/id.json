@@ -8,7 +8,10 @@
     "insight": "Insight",
     "gallery": "Galeri",
     "contact": "Kontak",
-    "collaborate": "Kolaborasi"
+    "collaborate": "Kolaborasi",
+    "about": "Tentang Kami",
+    "pillars": "Pilar",
+    "programs": "Program"
   },
   "hero": {
     "imageAlt": "Penari tradisional Nusantara",
@@ -29,9 +32,18 @@
     "focusEyebrow": "Fokus Kami",
     "focusHeading": "Pilar di Dayatara.",
     "pillars": [
-      { "title": "Seni Budaya Nusantara", "desc": "Pengembangan seni & budaya tradisi — wayang, tari, musik, dan teater." },
-      { "title": "UMKM & Ekonomi Kreatif", "desc": "Memberdayakan pelaku UMKM berbasis budaya untuk tumbuh dan berdaya saing." },
-      { "title": "Kreatifitas Muda", "desc": "Membuka ruang generasi muda untuk berkarya, berkolaborasi, dan berdampak." }
+      {
+        "title": "Seni Budaya Nusantara",
+        "desc": "Pengembangan seni & budaya tradisi — wayang, tari, musik, dan teater."
+      },
+      {
+        "title": "UMKM & Ekonomi Kreatif",
+        "desc": "Memberdayakan pelaku UMKM berbasis budaya untuk tumbuh dan berdaya saing."
+      },
+      {
+        "title": "Kreatifitas Muda",
+        "desc": "Membuka ruang generasi muda untuk berkarya, berkolaborasi, dan berdampak."
+      }
     ]
   },
   "pillarSection": {
@@ -69,32 +81,76 @@
     "heading": "Layanan Unggulan",
     "desc": "Tujuh layanan inti yang menghubungkan budaya dengan kebutuhan mitra kami.",
     "services": [
-      { "title": "Strategic Consultant", "desc": "Perencanaan strategi berbasis budaya untuk institusi, korporasi, dan pemerintah." },
-      { "title": "Creative Development", "desc": "Pengembangan konsep kreatif, ide, dan narasi berakar pada kearifan lokal." },
-      { "title": "Community Engagement", "desc": "Membangun keterlibatan komunitas daerah lewat pendekatan partisipatif." },
-      { "title": "Sustainability Solutions", "desc": "Program berkelanjutan yang menghubungkan budaya dengan lingkungan & sosial." },
-      { "title": "Capacity Building & Training", "desc": "Pelatihan dan pengembangan kapasitas pelaku seni dan UMKM." },
-      { "title": "Research & Development", "desc": "Riset budaya, dokumentasi, dan pengembangan pengetahuan Nusantara." },
-      { "title": "Art & Culture Performance", "desc": "Produksi pertunjukan seni & budaya berkualitas tinggi." }
+      {
+        "title": "Strategic Consultant",
+        "desc": "Perencanaan strategi berbasis budaya untuk institusi, korporasi, dan pemerintah."
+      },
+      {
+        "title": "Creative Development",
+        "desc": "Pengembangan konsep kreatif, ide, dan narasi berakar pada kearifan lokal."
+      },
+      {
+        "title": "Community Engagement",
+        "desc": "Membangun keterlibatan komunitas daerah lewat pendekatan partisipatif."
+      },
+      {
+        "title": "Sustainability Solutions",
+        "desc": "Program berkelanjutan yang menghubungkan budaya dengan lingkungan & sosial."
+      },
+      {
+        "title": "Capacity Building & Training",
+        "desc": "Pelatihan dan pengembangan kapasitas pelaku seni dan UMKM."
+      },
+      {
+        "title": "Research & Development",
+        "desc": "Riset budaya, dokumentasi, dan pengembangan pengetahuan Nusantara."
+      },
+      {
+        "title": "Art & Culture Performance",
+        "desc": "Produksi pertunjukan seni & budaya berkualitas tinggi."
+      }
     ],
     "productsEyebrow": "Program Unggulan",
     "productsHeading": "Empat pilar program kami.",
     "products": [
-      { "title": "Pengembangan Seni & Budaya Nusantara" },
-      { "title": "Pemberdayaan UMKM & Ekonomi Kreatif" },
-      { "title": "Pengembangan Kreativitas Generasi Muda" },
-      { "title": "Media & Promosi Digital" }
+      {
+        "title": "Pengembangan Seni & Budaya Nusantara"
+      },
+      {
+        "title": "Pemberdayaan UMKM & Ekonomi Kreatif"
+      },
+      {
+        "title": "Pengembangan Kreativitas Generasi Muda"
+      },
+      {
+        "title": "Media & Promosi Digital"
+      }
     ]
   },
   "values": {
     "eyebrow": "Fondasi Kami",
     "heading": "Nilai-Nilai Yayasan",
     "items": [
-      { "title": "Integrity", "desc": "Menjunjung kejujuran dan tanggung jawab dalam setiap langkah." },
-      { "title": "Collaboration", "desc": "Kolaborasi lintas komunitas, generasi, dan institusi." },
-      { "title": "Innovation", "desc": "Menghadirkan gagasan segar berakar pada tradisi." },
-      { "title": "Sustainability", "desc": "Program yang berdampak jangka panjang." },
-      { "title": "Excellence", "desc": "Standar terbaik pada setiap karya dan layanan." }
+      {
+        "title": "Integrity",
+        "desc": "Menjunjung kejujuran dan tanggung jawab dalam setiap langkah."
+      },
+      {
+        "title": "Collaboration",
+        "desc": "Kolaborasi lintas komunitas, generasi, dan institusi."
+      },
+      {
+        "title": "Innovation",
+        "desc": "Menghadirkan gagasan segar berakar pada tradisi."
+      },
+      {
+        "title": "Sustainability",
+        "desc": "Program yang berdampak jangka panjang."
+      },
+      {
+        "title": "Excellence",
+        "desc": "Standar terbaik pada setiap karya dan layanan."
+      }
     ]
   },
   "why": {
@@ -102,22 +158,52 @@
     "headingLead": "Mengapa memilih",
     "desc": "Pengalaman lebih dari dua dekade bekerja bersama komunitas, korporasi, dan pemerintah di seluruh penjuru Nusantara.",
     "items": [
-      { "title": "Tim Berpengalaman", "desc": "Lebih dari dua dekade berkarya di industri budaya dan kreatif." },
-      { "title": "Solusi Berbasis Kebutuhan", "desc": "Setiap program dirancang sesuai konteks dan tujuan mitra." },
-      { "title": "Pendekatan Kolaboratif", "desc": "Melibatkan komunitas dan pelaku budaya dari awal hingga akhir." },
-      { "title": "Berorientasi Hasil", "desc": "Fokus pada dampak nyata, bukan sekadar seremoni." },
-      { "title": "Jejaring yang Luas", "desc": "Terhubung dengan pemerintah, korporasi, dan komunitas di seluruh Nusantara." }
+      {
+        "title": "Tim Berpengalaman",
+        "desc": "Lebih dari dua dekade berkarya di industri budaya dan kreatif."
+      },
+      {
+        "title": "Solusi Berbasis Kebutuhan",
+        "desc": "Setiap program dirancang sesuai konteks dan tujuan mitra."
+      },
+      {
+        "title": "Pendekatan Kolaboratif",
+        "desc": "Melibatkan komunitas dan pelaku budaya dari awal hingga akhir."
+      },
+      {
+        "title": "Berorientasi Hasil",
+        "desc": "Fokus pada dampak nyata, bukan sekadar seremoni."
+      },
+      {
+        "title": "Jejaring yang Luas",
+        "desc": "Terhubung dengan pemerintah, korporasi, dan komunitas di seluruh Nusantara."
+      }
     ]
   },
   "struktur": {
     "eyebrow": "Organisasi",
     "heading": "Struktur Organisasi",
     "roles": {
-      "boardOfAdvisors": { "label": "Dewan Pembina", "desc": "Memberikan arahan strategis dan menjaga keberlanjutan visi serta misi yayasan dalam jangka panjang." },
-      "boardOfSupervisors": { "label": "Dewan Pengawas", "desc": "Mengawasi jalannya program dan tata kelola yayasan agar tetap sesuai dengan prinsip akuntabilitas." },
-      "chairman": { "label": "Ketua Umum", "desc": "Memimpin arah strategis yayasan serta mengoordinasikan seluruh program dan kemitraan." },
-      "secretary": { "label": "Sekretaris", "desc": "Mengelola administrasi, dokumentasi, dan komunikasi kelembagaan yayasan." },
-      "treasurer": { "label": "Bendahara", "desc": "Bertanggung jawab atas pengelolaan keuangan dan pelaporan anggaran yayasan secara transparan." }
+      "boardOfAdvisors": {
+        "label": "Dewan Pembina",
+        "desc": "Memberikan arahan strategis dan menjaga keberlanjutan visi serta misi yayasan dalam jangka panjang."
+      },
+      "boardOfSupervisors": {
+        "label": "Dewan Pengawas",
+        "desc": "Mengawasi jalannya program dan tata kelola yayasan agar tetap sesuai dengan prinsip akuntabilitas."
+      },
+      "chairman": {
+        "label": "Ketua Umum",
+        "desc": "Memimpin arah strategis yayasan serta mengoordinasikan seluruh program dan kemitraan."
+      },
+      "secretary": {
+        "label": "Sekretaris",
+        "desc": "Mengelola administrasi, dokumentasi, dan komunikasi kelembagaan yayasan."
+      },
+      "treasurer": {
+        "label": "Bendahara",
+        "desc": "Bertanggung jawab atas pengelolaan keuangan dan pelaporan anggaran yayasan secara transparan."
+      }
     }
   },
   "portfolio": {
@@ -126,15 +212,35 @@
     "categories": {
       "government": {
         "label": "Government",
-        "items": ["Kementerian Lingkungan Hidup", "Kementerian Kesehatan", "Kementerian Pertanian", "Kementerian Pariwisata", "Kementerian KUKM", "Kementerian Kelautan & Perikanan"]
+        "items": [
+          "Kementerian Lingkungan Hidup",
+          "Kementerian Kesehatan",
+          "Kementerian Pertanian",
+          "Kementerian Pariwisata",
+          "Kementerian KUKM",
+          "Kementerian Kelautan & Perikanan"
+        ]
       },
       "corporate": {
         "label": "Corporate",
-        "items": ["Bank Mandiri", "Pertamina", "Jaya Ancol", "Pelindo"]
+        "items": [
+          "Bank Mandiri",
+          "Pertamina",
+          "Jaya Ancol",
+          "Pelindo"
+        ]
       },
       "community": {
         "label": "Community",
-        "items": ["Kadin", "KNPI", "Pemuda Pancasila", "Pakutho", "Pakuwojo", "Komppi", "Persada BUMD"]
+        "items": [
+          "Kadin",
+          "KNPI",
+          "Pemuda Pancasila",
+          "Pakutho",
+          "Pakuwojo",
+          "Komppi",
+          "Persada BUMD"
+        ]
       }
     }
   },
@@ -162,14 +268,33 @@
   "gallery": {
     "eyebrow": "Dokumentasi Kegiatan",
     "heading": "Galeri",
-    "captions": ["Tari Tradisional", "Wayang Golek", "Upacara Adat", "Gamelan", "Batik Nusantara", "Anak Muda Kreatif"]
+    "captions": [
+      "Tari Tradisional",
+      "Wayang Golek",
+      "Upacara Adat",
+      "Gamelan",
+      "Batik Nusantara",
+      "Anak Muda Kreatif"
+    ]
   },
   "testimonials": {
     "eyebrow": "Testimoni",
     "items": [
-      { "quote": "Dayatara membantu kami merancang program budaya yang benar-benar hidup di tengah masyarakat.", "author": "Mitra Korporasi", "role": "[Placeholder testimoni]" },
-      { "quote": "Pendekatan kolaboratif Dayatara membuat komunitas kami merasa dilibatkan dari awal hingga akhir.", "author": "Ketua Komunitas", "role": "[Placeholder testimoni]" },
-      { "quote": "Kualitas kurasi dan produksi pertunjukan mereka berkelas nasional. Sangat direkomendasikan.", "author": "Instansi Pemerintah", "role": "[Placeholder testimoni]" }
+      {
+        "quote": "Dayatara membantu kami merancang program budaya yang benar-benar hidup di tengah masyarakat.",
+        "author": "Mitra Korporasi",
+        "role": "[Placeholder testimoni]"
+      },
+      {
+        "quote": "Pendekatan kolaboratif Dayatara membuat komunitas kami merasa dilibatkan dari awal hingga akhir.",
+        "author": "Ketua Komunitas",
+        "role": "[Placeholder testimoni]"
+      },
+      {
+        "quote": "Kualitas kurasi dan produksi pertunjukan mereka berkelas nasional. Sangat direkomendasikan.",
+        "author": "Instansi Pemerintah",
+        "role": "[Placeholder testimoni]"
+      }
     ]
   },
   "socialMedia": {

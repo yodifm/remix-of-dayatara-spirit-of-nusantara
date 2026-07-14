@@ -24,6 +24,14 @@ if (!i18n.isInitialized) {
     fallbackLng: DEFAULT_LANGUAGE,
     interpolation: { escapeValue: false },
   });
+} else {
+  // Vite HMR keeps the i18next singleton alive across module reloads, so the
+  // guard above only runs once per dev session. Without this, editing the
+  // locale JSON files wouldn't take effect until a full page reload — refresh
+  // the bundles in place instead so new/changed keys show up immediately.
+  i18n.addResourceBundle("id", "translation", id, true, true);
+  i18n.addResourceBundle("en", "translation", en, true, true);
+  i18n.addResourceBundle("ar", "translation", ar, true, true);
 }
 
 export default i18n;
