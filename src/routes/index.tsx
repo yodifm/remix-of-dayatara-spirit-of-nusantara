@@ -36,20 +36,20 @@ import SplitText from "@/components/SplitText/SplitText";
 import { Carousel, CarouselContent, CarouselItem } from "@/components/ui/carousel";
 import { Dialog, DialogContent, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import Autoplay from "embla-carousel-autoplay";
-import heroImg from "@/assets/hero.jpg.asset.json";
-import seniImg from "@/assets/seni.jpg.asset.json";
-import umkmImg from "@/assets/umkm.jpg.asset.json";
-import mudaImg from "@/assets/muda.jpg.asset.json";
-import gal1 from "@/assets/gal1.jpg.asset.json";
-import gal2 from "@/assets/gal2.jpg.asset.json";
-import gal3 from "@/assets/gal3.jpg.asset.json";
-import gal4 from "@/assets/gal4.jpg.asset.json";
+import heroImg from "@/assets/hero.jpg";
+import seniImg from "@/assets/seni.jpg";
+import umkmImg from "@/assets/umkm.jpg";
+import mudaImg from "@/assets/muda.jpg";
+import gal1 from "@/assets/gal1.jpg";
+import gal2 from "@/assets/gal2.jpg";
+import gal3 from "@/assets/gal3.jpg";
+import gal4 from "@/assets/gal4.jpg";
 
 export const Route = createFileRoute("/")({
   head: () => ({
     meta: [
-      { property: "og:image", content: heroImg.url.startsWith("http") ? heroImg.url : `https://dayataranusantara.com${heroImg.url}` },
-      { name: "twitter:image", content: heroImg.url.startsWith("http") ? heroImg.url : `https://dayataranusantara.com${heroImg.url}` },
+      { property: "og:image", content: `https://dayataranusantara.com${heroImg}` },
+      { name: "twitter:image", content: `https://dayataranusantara.com${heroImg}` },
     ],
   }),
   component: Index,
@@ -434,7 +434,7 @@ function Hero() {
   return (
     <section id="beranda" className="relative min-h-screen overflow-hidden bg-[color:var(--navy)] text-[color:var(--cream)]">
       <img
-        src={heroImg.url}
+        src={heroImg}
         alt={t("hero.imageAlt")}
         width={1600}
         height={1100}
@@ -576,7 +576,7 @@ function PillarSection({
 }: {
   id: string;
   translationKey: "seni" | "umkm" | "muda";
-  image: { url: string };
+  image: string;
   reverse?: boolean;
   tone?: "cream" | "navy";
 }) {
@@ -598,7 +598,7 @@ function PillarSection({
           <div className="reveal relative">
             <div className="dot-grid absolute -left-4 -top-4 h-24 w-24 opacity-60" />
             <img
-              src={image.url}
+              src={image}
               alt={title}
               loading="lazy"
               className="relative aspect-[4/5] w-full rounded-3xl object-cover shadow-2xl"
@@ -638,7 +638,7 @@ function PillarSection({
 }
 
 const SERVICE_ICONS = [Compass, Lightbulb, Users, Leaf, GraduationCap, Microscope, Palette];
-const PRODUCT_MEDIA: ({ slug: string; image: { url: string } } | { slug: string; Icon: typeof Megaphone })[] = [
+const PRODUCT_MEDIA: ({ slug: string; image: string } | { slug: string; Icon: typeof Megaphone })[] = [
   { slug: "program-seni", image: seniImg },
   { slug: "program-umkm", image: umkmImg },
   { slug: "program-muda", image: mudaImg },
@@ -706,7 +706,7 @@ function Layanan() {
                   <div className="relative aspect-[4/3] w-full overflow-hidden">
                     {"image" in media ? (
                       <img
-                        src={media.image.url}
+                        src={media.image}
                         alt={p.title}
                         loading="lazy"
                         className="h-full w-full object-cover transition-transform duration-700 group-hover:scale-110"
@@ -977,7 +977,7 @@ function Insight() {
                 <article className="reveal group cursor-pointer text-left">
                   <div className="relative overflow-hidden aspect-[4/3]">
                     <img
-                      src={media.img.url}
+                      src={media.img}
                       alt={a.title}
                       loading="lazy"
                       className="h-full w-full object-cover transition-transform duration-700 group-hover:scale-105"
@@ -998,7 +998,7 @@ function Insight() {
                 <DialogTitle className="sr-only">{a.title}</DialogTitle>
                 <div className="-mx-6 -mt-6 aspect-[16/9] overflow-hidden">
                   <img
-                    src={media.img.url}
+                    src={media.img}
                     alt={a.title}
                     className="h-full w-full object-cover"
                   />
@@ -1048,7 +1048,7 @@ function Galeri() {
               className="reveal group relative aspect-square overflow-hidden rounded-2xl shadow-sm transition-shadow duration-500 hover:shadow-2xl"
             >
               <img
-                src={GALLERY_IMAGES[i].url}
+                src={GALLERY_IMAGES[i]}
                 alt={cap}
                 loading="lazy"
                 className="h-full w-full object-cover transition-transform duration-700 group-hover:scale-110"
