@@ -224,7 +224,7 @@ function LanguageGate({ onSelect }: { onSelect: (code: string) => void }) {
       <div className="fade-up relative text-center">
         <DayataraLogo className="mx-auto h-16 w-16" />
         <div className="mt-6 font-serif text-2xl tracking-widest text-[color:var(--cream)]">DAYATARA</div>
-        <p className="eyebrow mt-4 !text-[color:var(--gold)]">Pilih Bahasa / Choose Language / اختر اللغة</p>
+        <p className="eyebrow mt-4 !text-[color:var(--gold)]">Pilih Bahasa / Choose Language / اختر اللغة / 选择语言</p>
         <div className="mt-8 flex flex-col gap-3 sm:flex-row">
           {SUPPORTED_LANGUAGES.map((l) => (
             <button
@@ -986,9 +986,9 @@ function Insight() {
                       {a.tag}
                     </span>
                   </div>
-                  <div className="mt-5">
+                  <div className="mt-7">
                     <div className="text-xs uppercase tracking-[0.25em] text-[color:var(--navy)]/50">{media.date}</div>
-                    <h3 className="mt-2 font-serif text-2xl text-[color:var(--navy)] leading-snug group-hover:text-[color:var(--gold)] transition-colors">
+                    <h3 className="mt-3 font-serif text-2xl text-[color:var(--navy)] leading-snug group-hover:text-[color:var(--gold)] transition-colors">
                       {a.title}
                     </h3>
                   </div>

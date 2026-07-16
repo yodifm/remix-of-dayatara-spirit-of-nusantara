@@ -3,11 +3,13 @@ import { initReactI18next } from "react-i18next";
 import id from "@/locales/id.json";
 import en from "@/locales/en.json";
 import ar from "@/locales/ar.json";
+import zh from "@/locales/zh.json";
 
 export const SUPPORTED_LANGUAGES = [
   { code: "id", native: "Indonesia" },
   { code: "en", native: "English" },
   { code: "ar", native: "العربية" },
+  { code: "zh", native: "中文" },
 ] as const;
 
 export const LANG_STORAGE_KEY = "dayatara-lang";
@@ -19,6 +21,7 @@ if (!i18n.isInitialized) {
       id: { translation: id },
       en: { translation: en },
       ar: { translation: ar },
+      zh: { translation: zh },
     },
     lng: DEFAULT_LANGUAGE,
     fallbackLng: DEFAULT_LANGUAGE,
@@ -32,6 +35,7 @@ if (!i18n.isInitialized) {
   i18n.addResourceBundle("id", "translation", id, true, true);
   i18n.addResourceBundle("en", "translation", en, true, true);
   i18n.addResourceBundle("ar", "translation", ar, true, true);
+  i18n.addResourceBundle("zh", "translation", zh, true, true);
 }
 
 export default i18n;
