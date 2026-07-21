@@ -83,6 +83,7 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
       { property: "og:title", content: "DAYATARA — Spirit of Culture" },
       { property: "og:description", content: "Menghubungkan budaya, kreativitas, dan komunitas untuk menggerakkan masa depan Nusantara." },
       { property: "og:type", content: "website" },
+      { property: "og:url", content: "https://dayataranusantara.com" },
       { name: "twitter:card", content: "summary_large_image" },
       { name: "twitter:site", content: "@dayatarafest" },
     ],
@@ -91,6 +92,7 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
         rel: "stylesheet",
         href: appCss,
       },
+      { rel: "canonical", href: "https://dayataranusantara.com" },
       { rel: "icon", href: "/favicon.ico", type: "image/x-icon" },
       { rel: "preconnect", href: "https://fonts.googleapis.com" },
       { rel: "preconnect", href: "https://fonts.gstatic.com", crossOrigin: "anonymous" },
@@ -103,11 +105,32 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
   errorComponent: ErrorComponent,
 });
 
+const ORGANIZATION_JSON_LD = {
+  "@context": "https://schema.org",
+  "@type": "NGO",
+  name: "Yayasan Daya Cipta Budaya Nusantara",
+  alternateName: "DAYATARA",
+  url: "https://dayataranusantara.com",
+  logo: "https://dayataranusantara.com/logo.png",
+  email: "mailto:dayataranusantara@gmail.com",
+  sameAs: [
+    "https://instagram.com/dayatarafest",
+    "https://facebook.com/dayatarafest",
+    "https://tiktok.com/@dayatarafest",
+    "https://youtube.com/@dayatarafest",
+    "https://open.spotify.com/user/dayatarafest",
+  ],
+};
+
 function RootShell({ children }: { children: ReactNode }) {
   return (
     <html lang="en">
       <head>
         <HeadContent />
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(ORGANIZATION_JSON_LD) }}
+        />
       </head>
       <body>
         {children}
