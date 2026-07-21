@@ -20,4 +20,11 @@ export default defineConfig({
     // nitro/vite builds from this
     server: { entry: "server" },
   },
+  // Building with `DEPLOY_TARGET=vps` targets a plain Node.js server instead of
+  // the default Cloudflare Workers build, so the output can run under a VPS
+  // process manager (e.g. aaPanel + PM2). Leaving DEPLOY_TARGET unset keeps the
+  // existing Cloudflare/Vercel build behavior unchanged.
+  nitro: {
+    preset: process.env.DEPLOY_TARGET === "vps" ? "node-server" : undefined,
+  },
 });
