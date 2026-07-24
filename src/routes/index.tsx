@@ -263,11 +263,12 @@ function Hero({ revealed = true }: { revealed?: boolean }) {
               {t("hero.ctaPrimary")}
             </a>
             <a
-              href="#kontak"
+              href="/dayatara-catalog.pdf"
+              download
               className="inline-flex items-center gap-2 rounded-full border border-[color:var(--cream)]/40 px-8 py-4 text-sm font-semibold uppercase tracking-[0.2em] text-[color:var(--cream)] hover:border-[color:var(--gold)] hover:text-[color:var(--gold)] transition-colors"
             >
               <Download size={16} />
-              Download Catalog
+              {t("hero.ctaCatalog")}
             </a>
           </div>
         </div>
