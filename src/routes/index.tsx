@@ -48,8 +48,8 @@ import gal4 from "@/assets/gal4.jpg";
 export const Route = createFileRoute("/")({
   head: () => ({
     meta: [
-      { property: "og:image", content: `https://dayataranusantara.com${heroImg}` },
-      { name: "twitter:image", content: `https://dayataranusantara.com${heroImg}` },
+      { property: "og:image", content: `https://dayatara.com${heroImg}` },
+      { name: "twitter:image", content: `https://dayatara.com${heroImg}` },
     ],
   }),
   component: Index,
@@ -1022,7 +1022,7 @@ function Kontak() {
 const SOCIAL_LINKS = [
   { key: "whatsapp", Icon: WhatsAppIcon, href: "https://wa.me/6285817773695" },
   { key: "email", Icon: Mail, href: "mailto:dayataranusantara@gmail.com" },
-  { key: "website", Icon: Globe, href: "https://dayataranusantara.com" },
+  { key: "website", Icon: Globe, href: "https://dayatara.com" },
   { key: "instagram", Icon: Instagram, href: "https://instagram.com/dayatarafest" },
   { key: "facebook", Icon: Facebook, href: "https://facebook.com/dayatarafest" },
   { key: "tiktok", Icon: TikTokIcon, href: "https://tiktok.com/@dayatarafest" },
@@ -1108,7 +1108,7 @@ function Footer() {
               </li>
               <li>
                 <div className="text-[color:var(--cream)]/50 text-xs uppercase tracking-widest">Website</div>
-                <a href="https://dayataranusantara.com" className="hover:text-[color:var(--gold)]">dayataranusantara.com</a>
+                <a href="https://dayatara.com" className="hover:text-[color:var(--gold)]">dayatara.com</a>
               </li>
             </ul>
           </div>
