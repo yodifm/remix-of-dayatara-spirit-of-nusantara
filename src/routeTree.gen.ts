@@ -9,8 +9,14 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
+import { Route as KenduriNusantaraRouteImport } from './routes/kenduri-nusantara'
 import { Route as IndexRouteImport } from './routes/index'
 
+const KenduriNusantaraRoute = KenduriNusantaraRouteImport.update({
+  id: '/kenduri-nusantara',
+  path: '/kenduri-nusantara',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
@@ -19,28 +25,39 @@ const IndexRoute = IndexRouteImport.update({
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/kenduri-nusantara': typeof KenduriNusantaraRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/kenduri-nusantara': typeof KenduriNusantaraRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
+  '/kenduri-nusantara': typeof KenduriNusantaraRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/'
+  fullPaths: '/' | '/kenduri-nusantara'
   fileRoutesByTo: FileRoutesByTo
-  to: '/'
-  id: '__root__' | '/'
+  to: '/' | '/kenduri-nusantara'
+  id: '__root__' | '/' | '/kenduri-nusantara'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  KenduriNusantaraRoute: typeof KenduriNusantaraRoute
 }
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
+    '/kenduri-nusantara': {
+      id: '/kenduri-nusantara'
+      path: '/kenduri-nusantara'
+      fullPath: '/kenduri-nusantara'
+      preLoaderRoute: typeof KenduriNusantaraRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/': {
       id: '/'
       path: '/'
@@ -53,6 +70,7 @@ declare module '@tanstack/react-router' {
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  KenduriNusantaraRoute: KenduriNusantaraRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)

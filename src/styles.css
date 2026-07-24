@@ -60,8 +60,10 @@
   --color-sidebar-border: var(--sidebar-border);
   --color-sidebar-ring: var(--sidebar-ring);
   --color-navy: var(--navy);
+  --color-navy-deep: var(--navy-deep);
   --color-gold: var(--gold);
   --color-cream: var(--cream);
+  --color-cream-dim: var(--cream-dim);
   --color-dot: var(--dot);
   --font-serif: "Playfair Display", Georgia, serif;
   --font-sans: "Barlow", system-ui, sans-serif;
@@ -70,8 +72,10 @@
 :root {
   --radius: 0.625rem;
   --navy: #1f2a44;
+  --navy-deep: #141b30;
   --gold: #c6a75e;
   --cream: #f7ede2;
+  --cream-dim: #ece2d3;
   --dot: #b23a3a;
   --background: #f7ede2;
   --foreground: #1f2a44;
@@ -205,7 +209,13 @@
   transform: translateY(24px);
   transition: opacity 0.8s ease-out, transform 0.8s ease-out;
 }
-.reveal.is-visible {
-  opacity: 1;
-  transform: translateY(0);
+/* Kept in the same "utilities" layer as .reveal above — an unlayered override
+   here does win on specificity, but some browsers mishandle the transition
+   itself when its start/end rules sit in different cascade layers, so the
+   opacity/transform change silently fails to animate. */
+@layer utilities {
+  .reveal.is-visible {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }

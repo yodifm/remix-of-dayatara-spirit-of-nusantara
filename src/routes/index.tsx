@@ -29,9 +29,9 @@ import {
   Instagram,
   Facebook,
   Youtube,
-  ChevronDown,
 } from "lucide-react";
 import { DayataraLogo } from "@/components/DayataraLogo";
+import { SiteNav } from "@/components/SiteNav";
 import SplitText from "@/components/SplitText/SplitText";
 import { Carousel, CarouselContent, CarouselItem } from "@/components/ui/carousel";
 import { Dialog, DialogContent, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
@@ -78,32 +78,6 @@ function SpotifyIcon({ size = 20 }: { size?: number }) {
     </svg>
   );
 }
-
-const NAV = [
-  { href: "#beranda", key: "home" },
-  { href: "#tentang-kami", key: "about" },
-  {
-    key: "pillars",
-    dropdown: [
-      { href: "#seni", key: "artsCulture" },
-      { href: "#umkm", key: "smes" },
-      { href: "#muda", key: "youthCreativity" },
-    ],
-  },
-  { href: "#layanan", key: "services" },
-  {
-    key: "programs",
-    dropdown: [
-      { href: "#program-seni", productIndex: 0 },
-      { href: "#program-umkm", productIndex: 1 },
-      { href: "#program-muda", productIndex: 2 },
-      { href: "#program-digital", productIndex: 3 },
-    ],
-  },
-  { href: "#insight", key: "insight" },
-  { href: "#galeri", key: "gallery" },
-  { href: "#kontak", key: "contact" },
-] as const;
 
 /**
  * Re-scans for `.reveal` elements whenever `rescanKey` changes (e.g. the active
@@ -187,18 +161,20 @@ function SectionHeading({
 }
 
 /** Shows the language picker on first visit, then remembers the choice in localStorage and syncs <html dir/lang>. */
+const GATE_EXIT_MS = 700;
+
 function useLanguageGate() {
   const { i18n } = useTranslation();
   // Default to showing the gate so it's the first thing painted (both on the
   // server and on the client's first render), instead of briefly flashing the
   // site content before the "no stored language yet" check resolves.
-  const [showGate, setShowGate] = useState(true);
+  const [gatePhase, setGatePhase] = useState<"open" | "closing" | "closed">("open");
 
   useEffect(() => {
     const stored = window.localStorage.getItem(LANG_STORAGE_KEY);
     if (stored) {
       if (stored !== i18n.language) i18n.changeLanguage(stored);
-      setShowGate(false);
+      setGatePhase("closed");
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
@@ -211,15 +187,20 @@ function useLanguageGate() {
   const selectLanguage = (code: string) => {
     window.localStorage.setItem(LANG_STORAGE_KEY, code);
     i18n.changeLanguage(code);
-    setShowGate(false);
+    setGatePhase("closing");
+    window.setTimeout(() => setGatePhase("closed"), GATE_EXIT_MS);
   };
 
-  return { showGate, selectLanguage };
+  return { gatePhase, selectLanguage };
 }
 
-function LanguageGate({ onSelect }: { onSelect: (code: string) => void }) {
+function LanguageGate({ onSelect, closing }: { onSelect: (code: string) => void; closing: boolean }) {
   return (
-    <div className="fixed inset-0 z-[100] grid place-items-center bg-[color:var(--navy)] p-6">
+    <div
+      className={`fixed inset-0 z-[100] grid place-items-center bg-[color:var(--navy)] p-6 transition-all duration-700 ease-in-out ${
+        closing ? "scale-110 opacity-0 blur-md pointer-events-none" : "scale-100 opacity-100 blur-none"
+      }`}
+    >
       <div className="dot-grid absolute inset-0 opacity-10" />
       <div className="fade-up relative text-center">
         <DayataraLogo className="mx-auto h-16 w-16" />
@@ -241,195 +222,7 @@ function LanguageGate({ onSelect }: { onSelect: (code: string) => void }) {
   );
 }
 
-function LangSwitcher() {
-  const { i18n } = useTranslation();
-  const [open, setOpen] = useState(false);
-  const current = SUPPORTED_LANGUAGES.find((l) => l.code === i18n.language) ?? SUPPORTED_LANGUAGES[0];
-  const selectLanguage = (code: string) => {
-    window.localStorage.setItem(LANG_STORAGE_KEY, code);
-    i18n.changeLanguage(code);
-  };
-  return (
-    <div className="relative">
-      <button
-        onClick={() => setOpen((v) => !v)}
-        aria-label="Pilih bahasa"
-        className="flex items-center gap-1.5 rounded-full border border-[color:var(--gold)]/40 px-3 py-1.5 text-xs font-semibold uppercase tracking-widest text-[color:var(--gold)] transition-colors hover:bg-[color:var(--gold)]/10"
-      >
-        <Globe size={14} />
-        {current.code.toUpperCase()}
-      </button>
-      {open && (
-        <>
-          <div className="fixed inset-0 z-40" onClick={() => setOpen(false)} />
-          <div className="absolute end-0 z-50 mt-2 w-40 overflow-hidden rounded-xl border border-[color:var(--gold)]/30 bg-[color:var(--navy)] shadow-xl">
-            {SUPPORTED_LANGUAGES.map((l) => (
-              <button
-                key={l.code}
-                onClick={() => {
-                  selectLanguage(l.code);
-                  setOpen(false);
-                }}
-                className={`block w-full px-4 py-2.5 text-left text-sm transition-colors hover:bg-[color:var(--gold)]/10 ${
-                  l.code === current.code ? "text-[color:var(--gold)]" : "text-[color:var(--cream)]/85"
-                }`}
-              >
-                {l.native}
-              </button>
-            ))}
-          </div>
-        </>
-      )}
-    </div>
-  );
-}
-
-function NavDropdown({ label, items }: { label: string; items: { href: string; label: string }[] }) {
-  const [open, setOpen] = useState(false);
-  return (
-    <div className="relative">
-      <button
-        onClick={() => setOpen((v) => !v)}
-        className="flex items-center gap-1 whitespace-nowrap text-xs font-semibold uppercase tracking-[0.15em] text-[color:var(--cream)]/85 transition-colors hover:text-[color:var(--gold)] xl:tracking-[0.2em]"
-      >
-        {label}
-        <ChevronDown size={12} className={`transition-transform ${open ? "rotate-180" : ""}`} />
-      </button>
-      {open && (
-        <>
-          <div className="fixed inset-0 z-40" onClick={() => setOpen(false)} />
-          <div className="absolute left-0 z-50 mt-3 w-64 overflow-hidden rounded-xl border border-[color:var(--gold)]/30 bg-[color:var(--navy)] shadow-xl">
-            {items.map((item) => (
-              <a
-                key={item.href}
-                href={item.href}
-                onClick={() => setOpen(false)}
-                className="block px-4 py-2.5 text-left text-sm text-[color:var(--cream)]/85 transition-colors hover:bg-[color:var(--gold)]/10 hover:text-[color:var(--gold)]"
-              >
-                {item.label}
-              </a>
-            ))}
-          </div>
-        </>
-      )}
-    </div>
-  );
-}
-
-function Nav() {
-  const { t } = useTranslation();
-  const products = t("layanan.products", { returnObjects: true }) as { title: string }[];
-  const [open, setOpen] = useState(false);
-  const [scrolled, setScrolled] = useState(false);
-  useEffect(() => {
-    const onScroll = () => setScrolled(window.scrollY > 40);
-    onScroll();
-    window.addEventListener("scroll", onScroll);
-    return () => window.removeEventListener("scroll", onScroll);
-  }, []);
-  return (
-    <header
-      className={`fixed inset-x-0 top-0 z-50 transition-all duration-300 ${
-        scrolled ? "bg-[color:var(--navy)]/95 backdrop-blur shadow-lg" : "bg-transparent"
-      }`}
-    >
-      <div className="mx-auto flex max-w-7xl items-center justify-between gap-4 px-6 py-4">
-        <a href="#beranda" className="flex items-center gap-3">
-          <DayataraLogo className="h-11 w-11 shrink-0" />
-          <div className="hidden sm:block leading-tight">
-            <div className="font-serif text-xl font-bold tracking-widest text-[color:var(--cream)]">
-              DAYATARA
-            </div>
-            <div className="text-[10px] uppercase tracking-[0.3em] text-[color:var(--gold)]">
-              Spirit of Culture
-            </div>
-          </div>
-        </a>
-        <nav className="hidden items-center gap-5 xl:gap-7 lg:flex">
-          {NAV.map((n) =>
-            "dropdown" in n ? (
-              <NavDropdown
-                key={n.key}
-                label={t(`nav.${n.key}`)}
-                items={n.dropdown.map((d) => ({
-                  href: d.href,
-                  label: "productIndex" in d ? products[d.productIndex]?.title ?? "" : t(`nav.${d.key}`),
-                }))}
-              />
-            ) : (
-              <a
-                key={n.href}
-                href={n.href}
-                className="whitespace-nowrap text-xs font-semibold uppercase tracking-[0.15em] text-[color:var(--cream)]/85 hover:text-[color:var(--gold)] transition-colors xl:tracking-[0.2em]"
-              >
-                {t(`nav.${n.key}`)}
-              </a>
-            )
-          )}
-        </nav>
-        <div className="hidden items-center gap-4 lg:flex">
-          <LangSwitcher />
-          <a
-            href="#kontak"
-            className="inline-flex items-center whitespace-nowrap rounded-full border border-[color:var(--gold)] px-5 py-2 text-xs font-semibold uppercase tracking-[0.15em] text-[color:var(--gold)] hover:bg-[color:var(--gold)] hover:text-[color:var(--navy)] transition-colors"
-          >
-            {t("nav.collaborate")}
-          </a>
-        </div>
-        <div className="flex items-center gap-3 lg:hidden">
-          <LangSwitcher />
-          <button
-            className="text-[color:var(--cream)] p-2"
-            onClick={() => setOpen((v) => !v)}
-            aria-label="Menu"
-          >
-            <svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" strokeWidth="2">
-              {open ? <path d="M6 6l12 12M18 6L6 18" /> : <path d="M4 7h16M4 12h16M4 17h16" />}
-            </svg>
-          </button>
-        </div>
-      </div>
-      {open && (
-        <div className="lg:hidden bg-[color:var(--navy)] border-t border-[color:var(--gold)]/30">
-          <nav className="flex flex-col px-6 py-4">
-            {NAV.map((n) =>
-              "dropdown" in n ? (
-                <div key={n.key} className="py-2">
-                  <div className="py-1 text-sm font-semibold uppercase tracking-[0.2em] text-[color:var(--gold)]">
-                    {t(`nav.${n.key}`)}
-                  </div>
-                  <div className="flex flex-col border-l border-[color:var(--gold)]/20 pl-4">
-                    {n.dropdown.map((d) => (
-                      <a
-                        key={d.href}
-                        href={d.href}
-                        onClick={() => setOpen(false)}
-                        className="py-2 text-sm text-[color:var(--cream)]/80 hover:text-[color:var(--gold)]"
-                      >
-                        {"productIndex" in d ? products[d.productIndex]?.title ?? "" : t(`nav.${d.key}`)}
-                      </a>
-                    ))}
-                  </div>
-                </div>
-              ) : (
-                <a
-                  key={n.href}
-                  href={n.href}
-                  onClick={() => setOpen(false)}
-                  className="py-3 text-sm font-semibold uppercase tracking-[0.2em] text-[color:var(--cream)]/90 hover:text-[color:var(--gold)]"
-                >
-                  {t(`nav.${n.key}`)}
-                </a>
-              )
-            )}
-          </nav>
-        </div>
-      )}
-    </header>
-  );
-}
-
-function Hero() {
+function Hero({ revealed = true }: { revealed?: boolean }) {
   const { t } = useTranslation();
   return (
     <section id="beranda" className="relative min-h-screen overflow-hidden bg-[color:var(--navy)] text-[color:var(--cream)]">
@@ -443,7 +236,11 @@ function Hero() {
       <div className="absolute inset-0 bg-gradient-to-r from-[color:var(--navy)] via-[color:var(--navy)]/85 to-transparent" />
       <div className="dot-grid absolute inset-0 opacity-10 mix-blend-screen" />
       <div className="relative z-10 mx-auto flex min-h-screen max-w-7xl flex-col justify-center px-6 pt-32 pb-20">
-        <div className="max-w-3xl fade-up">
+        <div
+          className={`max-w-3xl transition-all duration-700 ease-out ${
+            revealed ? "opacity-100 translate-y-0" : "opacity-0 translate-y-8"
+          }`}
+        >
           <div className="mb-6 flex items-center gap-4">
             <span className="h-px w-12 bg-[color:var(--gold)]" />
             <span className="eyebrow !text-[color:var(--gold)]">
@@ -1351,13 +1148,15 @@ function Footer() {
 
 function Index() {
   const { i18n } = useTranslation();
-  const { showGate, selectLanguage } = useLanguageGate();
+  const { gatePhase, selectLanguage } = useLanguageGate();
   useReveal(i18n.language);
   return (
     <main className="min-h-screen bg-[color:var(--cream)]">
-      {showGate && <LanguageGate onSelect={selectLanguage} />}
-      <Nav />
-      <Hero />
+      {gatePhase !== "closed" && (
+        <LanguageGate onSelect={selectLanguage} closing={gatePhase === "closing"} />
+      )}
+      <SiteNav />
+      <Hero revealed={gatePhase !== "open"} />
       <Beranda />
       <PillarSection id="seni" translationKey="seni" image={seniImg} />
       <PillarSection id="umkm" translationKey="umkm" image={umkmImg} reverse tone="navy" />
